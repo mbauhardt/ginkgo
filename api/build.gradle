@@ -1,0 +1,6 @@
+dependsOn(':shared')
+
+dependencies {
+    compile project(':shared')
+ 
+}
