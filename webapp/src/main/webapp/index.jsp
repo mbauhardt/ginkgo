@@ -1,0 +1,6 @@
+<%
+
+
+response.sendRedirect("welcome.html");
+
+%>

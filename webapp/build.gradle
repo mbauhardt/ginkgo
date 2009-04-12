@@ -1,0 +1,45 @@
+dependsOn(':shared')
+dependsOn(':api')
+dependsOn(':vcs:svn')
+
+usePlugin('war')
+usePlugin('jetty')
+
+dependencies {
+    compile project(':shared')
+    compile project(':api')
+    compile project(':vcs:svn')
+    
+    addFlatDirResolver('webapp-lib', new File(rootDir, 'webapp/lib')) 
+	addFlatDirResolver('webapp-hibernate-lib', new File(rootDir, 'webapp/lib/hibernate'))
+
+	providedCompile ":jetty:6.1.14"
+   	clientModule(['providedCompile'], ":jsp-2.1:6.1.14") { 
+		dependency(":jsp-api-2.1:6.1.14")
+		dependency(":servlet-api-2.5:6.1.14")
+		compile ":servlet-api-2.5:6.1.14" 
+	} 
+
+   	clientModule(['compile'], ":hibernate:3.3.1.GA") { 
+		dependency(":antlr:2.7.6")
+		dependency(":commons-collections:3.1")
+		dependency(":dom4j:1.6.1")
+		dependency(":hibernate-cglib-repack:2.1_3")
+		dependency(":javassist:3.4.GA")
+		dependency(":jta:1.1")
+		dependency(":slf4j-api:1.5.2")
+	} 
+
+   	clientModule(['compile'], ":hibernate-annotations:3.4.0.GA") { 
+		compile ":ejb3-persistence:1.0.2.GA"
+		dependency(":hibernate-commons-annotations:3.1.0.GA")
+	} 
+
+   	clientModule(['compile'], ":hibernate-entitymanager:3.4.0.GA") { 
+	} 
+	 
+	compile ":spring-webmvc:2.5.6"
+	compile ":mysql-connector-java:5.1.7-bin"
+}
+
+//jettyRun.jettyConfig=new File("src/main/resources/jetty.xml")

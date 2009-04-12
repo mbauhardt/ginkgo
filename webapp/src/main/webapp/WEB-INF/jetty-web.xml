@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+<Configure id="WebContext" class="org.mortbay.jetty.webapp.WebAppContext">
+    <Call class="java.lang.System" name="setProperty">
+        <Arg>java.security.auth.login.config</Arg>
+        <Arg><SystemProperty name="user.dir" default="." />/etc/login.conf</Arg>
+    </Call>
+    <Call name="getSecurityHandler">
+        <Set name="UserRealm">
+            <New class="ginkgo.webapp.security.UserRealm">
+            </New>
+        </Set>
+    </Call>
+</Configure>
