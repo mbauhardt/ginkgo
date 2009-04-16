@@ -59,7 +59,7 @@ public class DataInjector {
         Stage stage = _stageDao.getByName("Vcs Prepare");
         Step step = new Step();
         step.setName("Update");
-        step.setCommand("svn update");
+        step.setCommand("ls");
         step.setStage(stage);
         if (!_stepDao.exists("Update")) {
             _stepDao.makePersistent(step);
@@ -68,7 +68,7 @@ public class DataInjector {
         stage = _stageDao.getByName("Compile");
         step = new Step();
         step.setName("Clean");
-        step.setCommand("mvn clean");
+        step.setCommand("pwd");
         step.setStage(stage);
         if (!_stepDao.exists("Clean")) {
             _stepDao.makePersistent(step);
@@ -76,7 +76,7 @@ public class DataInjector {
 
         step = new Step();
         step.setName("Compile");
-        step.setCommand("mvn compile");
+        step.setCommand("foo");
         step.setStage(stage);
         if (!_stepDao.exists("Compile")) {
             _stepDao.makePersistent(step);

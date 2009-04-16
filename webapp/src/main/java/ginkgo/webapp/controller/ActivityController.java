@@ -58,7 +58,6 @@ public class ActivityController {
     @RequestMapping(method = RequestMethod.POST)
     public String postActivity(@RequestParam("id") Long id) throws DaoException {
 
-        CommandQueue<String> commandQueue = new CommandQueue<String>();
         Project project = _projectDao.getById(id);
         List<BuildPlan> buildPlans = project.getBuildPlans();
         for (BuildPlan buildPlan : buildPlans) {
@@ -88,16 +87,14 @@ public class ActivityController {
                         buildNumber.setBuildCommand(nextBuild);
                     }
                     parentBuildId = nextBuild.getId();
-                    LOG.info("push command: " + command);
-                    commandQueue.push(command);
                 }
             }
         }
-        List<AgentRepositoryEntry> entries = _agentRepository.getEntries();
-        for (AgentRepositoryEntry agentRepositoryEntry : entries) {
-            IBuildAgent buildAgent = agentRepositoryEntry.getBuildAgent();
-            buildAgent.execute(commandQueue);
-        }
+        // List<AgentRepositoryEntry> entries = _agentRepository.getEntries();
+        // for (AgentRepositoryEntry agentRepositoryEntry : entries) {
+        // IBuildAgent buildAgent = agentRepositoryEntry.getBuildAgent();
+        // buildAgent.execute(commandQueue);
+        // }
 
         return "redirect:/user/activity.html";
     }

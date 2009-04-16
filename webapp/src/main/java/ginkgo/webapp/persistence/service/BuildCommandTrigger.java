@@ -4,7 +4,11 @@ import ginkgo.api.IBuildAgent;
 import ginkgo.webapp.persistence.PersistenceService;
 import ginkgo.webapp.persistence.dao.DaoException;
 import ginkgo.webapp.persistence.dao.IBuildCommandDao;
+import ginkgo.webapp.persistence.dao.IBuildNumberDao;
 import ginkgo.webapp.persistence.model.BuildCommand;
+import ginkgo.webapp.persistence.model.BuildNumber;
+import ginkgo.webapp.persistence.model.BuildPlan;
+import ginkgo.webapp.persistence.model.Project;
 import ginkgo.webapp.persistence.model.BuildCommand.Status;
 import ginkgo.webapp.server.AgentRepository;
 import ginkgo.webapp.server.AgentRepositoryEntry;
@@ -23,38 +27,47 @@ import org.springframework.stereotype.Service;
 @Qualifier("buildCommandTrigger")
 public class BuildCommandTrigger implements ITriggerService<BuildCommand> {
 
+    private static final int MAX_RESPONSE_WAITING_TIME = 1000 * 60 * 30;
+    private static final int RESPONSE_WAITING_TIME = 1000 * 5;
+
     private static final Logger LOG = LoggerFactory.getLogger(BuildCommandTrigger.class);
 
     private final AgentRepository _agentRepository;
     private final PersistenceService _persistenceService;
     private static final Object _mutex = new Object();
+
     private final IBuildCommandDao _buildCommandDao;
+    private final IBuildNumberDao _buildNumberDao;
 
     @Autowired
     public BuildCommandTrigger(AgentRepository agentRepository, IBuildCommandDao buildCommandDao,
-            PersistenceService persistenceService) {
+            IBuildNumberDao buildNumberDao, PersistenceService persistenceService) {
         _agentRepository = agentRepository;
         _buildCommandDao = buildCommandDao;
+        _buildNumberDao = buildNumberDao;
         _persistenceService = persistenceService;
     }
 
     public boolean trigger(BuildCommand buildCommand) throws DaoException {
-        String command = buildCommand.getCommand();
         List<AgentRepositoryEntry> list = _agentRepository.getEntries();
         boolean success = false;
         if (!list.isEmpty()) {
-            LOG.info("try to trigger command: '" + command + "' on agents " + list);
             for (AgentRepositoryEntry agentRepositoryEntry : list) {
                 String agentName = agentRepositoryEntry.getAgentName();
                 _persistenceService.beginTransaction();
-                LOG.info("add agent [" + agentName + "] with status [" + Status.NOT_RUNNING + "] to buildCommand ["
-                        + buildCommand.getCommand() + "]");
+                LOG.info("send buildCommand [" + buildCommand.getCommand() + " (" + buildCommand.getId()
+                        + ")], buildAgent [" + agentName + "]: " + Status.NOT_RUNNING);
                 buildCommand.addStatus(agentName, Status.NOT_RUNNING);
+                BuildCommand firstBuildCommand = _buildCommandDao.getFirstBuildCommand(buildCommand);
+                BuildNumber buildNumber = _buildNumberDao.getByBuildCommand(firstBuildCommand);
+                BuildPlan buildPlan = buildNumber.getBuildPlan();
+                Project project = buildPlan.getProject();
                 _persistenceService.commitTransaction();
+                _persistenceService.close();
                 IBuildAgent buildAgent = agentRepositoryEntry.getBuildAgent();
-                buildAgent.execute(command);
+                buildAgent.execute(project.getName(), buildCommand.getId(), buildCommand.getCommand());
             }
-            success = waitOfAgentsResponse(buildCommand);
+            success = waitOfAgentsResponse(buildCommand, System.currentTimeMillis(), System.currentTimeMillis());
             if (success) {
                 BuildCommand nextBuild = buildCommand.getNextBuild();
                 if (nextBuild != null) {
@@ -67,27 +80,33 @@ public class BuildCommandTrigger implements ITriggerService<BuildCommand> {
         return success;
     }
 
-    private boolean waitOfAgentsResponse(BuildCommand buildCommand) throws DaoException {
-        LOG.info("wait of agent response from build command: " + buildCommand.getCommand());
+    private boolean waitOfAgentsResponse(BuildCommand buildCommand, long startTime, long waitingTime)
+            throws DaoException {
+        if (waitingTime >= (startTime + MAX_RESPONSE_WAITING_TIME)) {
+            return false;
+        }
         try {
             synchronized (_mutex) {
-                _mutex.wait(1000 * 30);
+                _mutex.wait(RESPONSE_WAITING_TIME);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         _persistenceService.beginTransaction();
         buildCommand = _buildCommandDao.getById(buildCommand.getId());
-        _persistenceService.commitTransaction();
         Map<String, Status> buildAgentStatus = buildCommand.getBuildAgentStatus();
+        _persistenceService.commitTransaction();
+        _persistenceService.close();
         boolean success = true;
         Set<String> keySet = buildAgentStatus.keySet();
         for (String agentName : keySet) {
             Status status = buildAgentStatus.get(agentName);
+            LOG.info("receive buildCommand [" + buildCommand.getCommand() + " (" + buildCommand.getId() + ")], buildAgent ["
+                    + agentName + "]: " + status);
             switch (status) {
             case NOT_RUNNING:
             case RUNNING:
-                waitOfAgentsResponse(buildCommand);
+                waitOfAgentsResponse(buildCommand, startTime, waitingTime + RESPONSE_WAITING_TIME);
                 break;
             case FAILURE:
                 success = false;

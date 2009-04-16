@@ -4,12 +4,18 @@ import ginkgo.api.IAgentServer;
 import ginkgo.api.IBuildAgent;
 import ginkgo.shared.MessageConsumer;
 import ginkgo.shared.ProxyService;
+import ginkgo.webapp.persistence.PersistenceService;
+import ginkgo.webapp.persistence.dao.DaoException;
+import ginkgo.webapp.persistence.dao.IBuildCommandDao;
+import ginkgo.webapp.persistence.model.BuildCommand;
+import ginkgo.webapp.persistence.model.BuildCommand.Status;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +27,15 @@ public class AgentServer implements IAgentServer, Runnable, IRegistration {
     private ProxyService<IBuildAgent> _proxyService;
     private final MessageBoard _messageBoard;
     private static final Logger LOG = LoggerFactory.getLogger(AgentServer.class);
+    private final PersistenceService _persistenceService;
+    private final IBuildCommandDao _buildCommandDao;
 
-    public AgentServer(AgentRepository repository, MessageBoard messageBoard) {
+    public AgentServer(AgentRepository repository, MessageBoard messageBoard, PersistenceService persistenceService,
+            IBuildCommandDao buildCommandDao) {
         _repository = repository;
         _messageBoard = messageBoard;
+        _persistenceService = persistenceService;
+        _buildCommandDao = buildCommandDao;
         _proxyService = new ProxyService<IBuildAgent>();
     }
 
@@ -50,7 +61,7 @@ public class AgentServer implements IAgentServer, Runnable, IRegistration {
                 new RegistrationThread(socket, this).start();
             }
         } catch (Exception e) {
-            // _repository.stopAllBuildAgents();
+            LOG.error("error while registration", e);
         }
 
     }
@@ -70,12 +81,21 @@ public class AgentServer implements IAgentServer, Runnable, IRegistration {
         return _repository.contains(agentName);
     }
 
-    public static void main(String[] args) throws Exception {
-        AgentRepository repository = new AgentRepository();
-        AgentServer agentServer = new AgentServer(repository, new MessageBoard());
-        agentServer.startServer();
-        Thread.sleep(10000);
-        agentServer.stopServer();
+    public void executeStatus(String agentName, Long commandId, Boolean status) {
+        _persistenceService.beginTransaction();
+        try {
+            BuildCommand buildCommand = _buildCommandDao.getById(commandId);
+            Map<String, Status> buildAgentStatus = buildCommand.getBuildAgentStatus();
+            Status agentStatus = status ? Status.SUCCESS : Status.FAILURE;
+            buildAgentStatus.put(agentName, agentStatus);
+        } catch (DaoException e) {
+            LOG.error("error while update status on buildAgent", e);
+        }
+        _persistenceService.commitTransaction();
+    }
+
+    public void log(String agentName, Long commandId, String line) {
+
     }
 
 }

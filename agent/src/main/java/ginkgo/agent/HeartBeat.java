@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class HeartBeat {
 
     private static final Logger LOG = LoggerFactory.getLogger(HeartBeat.class);
-    private String _message = "PENDING";
+    private static String _message = "PENDING";
     private Timer _timer;
     private final IAgentServer _agentServer;
     private final String _name;
@@ -34,6 +34,10 @@ public class HeartBeat {
         LOG.info("Start hearbeats.");
         TimerTask task = new SendStatusTask();
         _timer.schedule(task, new Date(), 3 * 1000);
+    }
+
+    public static void setMessage(String message) {
+        _message = message;
     }
 
 }

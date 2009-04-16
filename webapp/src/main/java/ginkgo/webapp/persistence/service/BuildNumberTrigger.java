@@ -35,6 +35,7 @@ public class BuildNumberTrigger implements ITriggerService<BuildNumber> {
             BuildCommand buildCommand = buildNumber.getBuildCommand();
             Map<String, Status> buildAgentStatus = buildCommand.getBuildAgentStatus();
             if (buildAgentStatus.isEmpty()) {
+                LOG.info("trigger build command: " + buildCommand.getId());
                 success = _triggerService.trigger(buildCommand);
             }
             LOCK = false;

@@ -29,7 +29,7 @@ public class Svn implements IVcsable {
     }
 
     public void checkout() throws IOException {
-        _commandPipe.execute(_checkoutCommand);
+        //_commandPipe.execute(_checkoutCommand);
     }
 
     public void tag() {

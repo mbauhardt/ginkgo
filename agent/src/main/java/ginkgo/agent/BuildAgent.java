@@ -2,10 +2,12 @@ package ginkgo.agent;
 
 import ginkgo.api.IAgentServer;
 import ginkgo.api.IBuildAgent;
-import ginkgo.shared.CommandQueue;
+import ginkgo.shared.Command;
 import ginkgo.shared.MessageConsumer;
 import ginkgo.shared.ProxyService;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -22,20 +24,14 @@ public class BuildAgent implements IBuildAgent {
     private ProxyService<IAgentServer> _proxyService;
     private IAgentServer _agentServer;
     private final String _name;
+    private final File _workingDirectory;
 
-    public BuildAgent(String name, String ip, int port) {
+    public BuildAgent(String name, String ip, int port, File workingDirectory) {
         _name = name;
         _ip = ip;
         _port = port;
+        _workingDirectory = workingDirectory;
         _proxyService = new ProxyService<IAgentServer>();
-    }
-
-    public void execute(CommandQueue<String> commandQueue) {
-        String command = null;
-        while ((command = commandQueue.pop()) != null) {
-            System.out.println("BuildAgent.execute() " + command);
-            _agentServer.addStatus(_name, "execute: " + command);
-        }
     }
 
     public void startAgent() throws Exception {
@@ -65,13 +61,24 @@ public class BuildAgent implements IBuildAgent {
         _socket.close();
     }
 
-    public static void main(String[] args) throws Exception {
-        BuildAgent buildAgent = new BuildAgent("mbauhardt", "127.0.0.1", 9000);
-        buildAgent.startAgent();
+    public void execute(String buildPlanName, Long commandId, String command) {
+        HeartBeat.setMessage(command);
+        Command commandObject = new Command(commandId, _name, _agentServer);
+        try {
+            LOG.info("execute: " + command);
+            new File(_workingDirectory, buildPlanName).mkdirs();
+            boolean execute = commandObject.execute(command, new String[] {},
+                    new File(_workingDirectory, buildPlanName));
+            _agentServer.executeStatus(_name, commandId, execute);
+        } catch (IOException e) {
+            LOG.error("error executing command: " + command, e);
+            _agentServer.executeStatus(_name, commandId, false);
+        }
     }
 
-    public void execute(String command) {
-        System.out.println("BuildAgent.execute() " + command);
+    public static void main(String[] args) throws Exception {
+        BuildAgent buildAgent = new BuildAgent("mbauhardt", "127.0.0.1", 9000, new File("/tmp/ginkgo"));
+        buildAgent.startAgent();
     }
 
 }

@@ -1,5 +1,7 @@
 package ginkgo.webapp.controller;
 
+import ginkgo.webapp.persistence.PersistenceService;
+import ginkgo.webapp.persistence.dao.IBuildCommandDao;
 import ginkgo.webapp.server.AgentRepository;
 import ginkgo.webapp.server.AgentRepositoryEntry;
 import ginkgo.webapp.server.AgentServer;
@@ -26,10 +28,11 @@ public class BuildAgentController {
     private final MessageBoard _messageBoard;
 
     @Autowired
-    public BuildAgentController(AgentRepository repo, MessageBoard messageBoard) throws IOException {
+    public BuildAgentController(AgentRepository repo, MessageBoard messageBoard, PersistenceService persistenceService,
+            IBuildCommandDao buildCommandDao) throws IOException {
         _agentRepository = repo;
         _messageBoard = messageBoard;
-        _agentServer = new AgentServer(repo, messageBoard);
+        _agentServer = new AgentServer(repo, messageBoard, persistenceService, buildCommandDao);
         _agentServer.startServer();
     }
 

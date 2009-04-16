@@ -26,10 +26,10 @@ public class PersistenceFilter implements Filter {
 
         PersistenceService persistenceService = Environment.getInstance().getPersistenceService();
         try {
-            LOG.debug("begin transaction");
+            LOG.trace("begin transaction");
             persistenceService.beginTransaction();
             chain.doFilter(request, response);
-            LOG.debug("commit transaction");
+            LOG.trace("commit transaction");
             persistenceService.commitTransaction();
         } catch (Throwable t) {
             LOG.error("error while transaction handling. do a rollback", t);

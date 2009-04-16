@@ -69,7 +69,7 @@
             </tr>
             <c:forEach items="${buildCommands}" var="buildCommand">
             <tr>
-                <td>${buildCommand.command}</td>
+                <td>${buildCommand.command} (${buildCommand.id})</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
             </tr>

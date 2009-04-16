@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CollectionOfElements;
@@ -19,7 +20,7 @@ public class BuildCommand extends Base implements ITriggerable {
 
     private String _command;
 
-    @CollectionOfElements
+    @CollectionOfElements(fetch = FetchType.EAGER)
     private Map<String, Status> _buildAgentStatus = new HashMap<String, Status>();
 
     @OneToOne

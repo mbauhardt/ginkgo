@@ -15,7 +15,12 @@ public class PersistenceService {
 
     private EntityManagerFactory _entityManagerFactory;
 
-    private final ThreadLocal<EntityManager> _threadLocal = new ThreadLocal<EntityManager>();
+    private final ThreadLocal<EntityManager> _threadLocal = new ThreadLocal<EntityManager>() {
+        @Override
+        protected EntityManager initialValue() {
+            return _entityManagerFactory.createEntityManager();
+        }
+    };
 
     public PersistenceService() {
         _entityManagerFactory = Persistence.createEntityManagerFactory("manager1");

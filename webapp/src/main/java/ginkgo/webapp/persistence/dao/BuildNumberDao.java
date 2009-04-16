@@ -1,6 +1,7 @@
 package ginkgo.webapp.persistence.dao;
 
 import ginkgo.webapp.persistence.PersistenceService;
+import ginkgo.webapp.persistence.model.BuildCommand;
 import ginkgo.webapp.persistence.model.BuildNumber;
 import ginkgo.webapp.persistence.model.BuildPlan;
 
@@ -22,6 +23,13 @@ public class BuildNumberDao extends BaseDao<BuildNumber> implements IBuildNumber
                 + " as bn where bn._buildPlan._id = ?1 order by bn._buildNumber desc");
         query.setParameter(1, buildPlan.getId());
         query.setMaxResults(1);
+        return (BuildNumber) query.getSingleResult();
+    }
+
+    public BuildNumber getByBuildCommand(BuildCommand buildCommand) {
+        Query query = _persistenceService.createQuery("select bn from " + _clazz.getSimpleName()
+                + " as bn where bn._buildCommand._id = ?1");
+        query.setParameter(1, buildCommand.getId());
         return (BuildNumber) query.getSingleResult();
     }
 
