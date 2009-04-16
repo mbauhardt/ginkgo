@@ -1,7 +1,5 @@
 package ginkgo.webapp.controller;
 
-import ginkgo.api.IBuildAgent;
-import ginkgo.shared.CommandQueue;
 import ginkgo.webapp.persistence.dao.DaoException;
 import ginkgo.webapp.persistence.dao.IBuildDao;
 import ginkgo.webapp.persistence.dao.IBuildNumberDao;
@@ -13,7 +11,6 @@ import ginkgo.webapp.persistence.model.Project;
 import ginkgo.webapp.persistence.model.Stage;
 import ginkgo.webapp.persistence.model.Step;
 import ginkgo.webapp.server.AgentRepository;
-import ginkgo.webapp.server.AgentRepositoryEntry;
 
 import java.util.List;
 
@@ -30,19 +27,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/user/activity.html")
 public class ActivityController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ActivityController.class);
     private final IProjectDao _projectDao;
-    private final AgentRepository _agentRepository;
     private final IBuildDao _buildDao;
     private final IBuildNumberDao _buildNumberDao;
 
     @Autowired
-    public ActivityController(IProjectDao projectDao, IBuildDao buildDao, IBuildNumberDao buildNumberDao,
-            AgentRepository agentRepository) {
+    public ActivityController(IProjectDao projectDao, IBuildDao buildDao, IBuildNumberDao buildNumberDao) {
         _projectDao = projectDao;
         _buildDao = buildDao;
         _buildNumberDao = buildNumberDao;
-        _agentRepository = agentRepository;
     }
 
     @ModelAttribute("projects")
@@ -90,12 +83,6 @@ public class ActivityController {
                 }
             }
         }
-        // List<AgentRepositoryEntry> entries = _agentRepository.getEntries();
-        // for (AgentRepositoryEntry agentRepositoryEntry : entries) {
-        // IBuildAgent buildAgent = agentRepositoryEntry.getBuildAgent();
-        // buildAgent.execute(commandQueue);
-        // }
-
         return "redirect:/user/activity.html";
     }
 }
