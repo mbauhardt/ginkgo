@@ -1,5 +1,6 @@
 package ginkgo.webapp.persistence.model;
 
+import ginkgo.shared.BuildStatus;
 import ginkgo.webapp.persistence.service.ITriggerable;
 
 import java.util.HashMap;
@@ -14,17 +15,13 @@ import org.hibernate.annotations.CollectionOfElements;
 @Entity
 public class BuildCommand extends Base implements ITriggerable {
 
-    public static enum Status {
-        NOT_RUNNING, RUNNING, SUCCESS, FAILURE
-    }
-
     private String _command;
 
     @CollectionOfElements(fetch = FetchType.EAGER)
-    private Map<String, Status> _buildAgentStatus = new HashMap<String, Status>();
+    private Map<String, BuildStatus> _buildAgentStatus = new HashMap<String, BuildStatus>();
 
     @OneToOne
-    private BuildCommand _nextBuild;
+    private BuildCommand _nextBuildCommand;
 
     public String getCommand() {
         return _command;
@@ -34,24 +31,24 @@ public class BuildCommand extends Base implements ITriggerable {
         _command = command;
     }
 
-    public Map<String, Status> getBuildAgentStatus() {
+    public Map<String, BuildStatus> getBuildAgentStatus() {
         return _buildAgentStatus;
     }
 
-    public void setBuildAgentStatus(Map<String, Status> buildAgentStatus) {
+    public void setBuildAgentStatus(Map<String, BuildStatus> buildAgentStatus) {
         _buildAgentStatus = buildAgentStatus;
     }
 
-    public void addStatus(String agentName, Status status) {
+    public void addStatus(String agentName, BuildStatus status) {
         _buildAgentStatus.put(agentName, status);
     }
 
-    public BuildCommand getNextBuild() {
-        return _nextBuild;
+    public BuildCommand getNextBuildCommand() {
+        return _nextBuildCommand;
     }
 
     public void setNextBuild(BuildCommand nextBuild) {
-        _nextBuild = nextBuild;
+        _nextBuildCommand = nextBuild;
     }
 
 }

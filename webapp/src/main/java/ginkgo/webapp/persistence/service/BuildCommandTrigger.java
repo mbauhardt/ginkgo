@@ -1,6 +1,7 @@
 package ginkgo.webapp.persistence.service;
 
 import ginkgo.api.IBuildAgent;
+import ginkgo.shared.BuildStatus;
 import ginkgo.webapp.persistence.PersistenceService;
 import ginkgo.webapp.persistence.dao.DaoException;
 import ginkgo.webapp.persistence.dao.IBuildCommandDao;
@@ -9,7 +10,6 @@ import ginkgo.webapp.persistence.model.BuildCommand;
 import ginkgo.webapp.persistence.model.BuildNumber;
 import ginkgo.webapp.persistence.model.BuildPlan;
 import ginkgo.webapp.persistence.model.Project;
-import ginkgo.webapp.persistence.model.BuildCommand.Status;
 import ginkgo.webapp.server.AgentRepository;
 import ginkgo.webapp.server.AgentRepositoryEntry;
 
@@ -56,8 +56,8 @@ public class BuildCommandTrigger implements ITriggerService<BuildCommand> {
                 String agentName = agentRepositoryEntry.getAgentName();
                 _persistenceService.beginTransaction();
                 LOG.info("send buildCommand [" + buildCommand.getCommand() + " (" + buildCommand.getId()
-                        + ")], buildAgent [" + agentName + "]: " + Status.NOT_RUNNING);
-                buildCommand.addStatus(agentName, Status.NOT_RUNNING);
+                        + ")], buildAgent [" + agentName + "]: " + BuildStatus.NOT_RUNNING);
+                buildCommand.addStatus(agentName, BuildStatus.NOT_RUNNING);
                 BuildCommand firstBuildCommand = _buildCommandDao.getFirstBuildCommand(buildCommand);
                 BuildNumber buildNumber = _buildNumberDao.getByBuildCommand(firstBuildCommand);
                 BuildPlan buildPlan = buildNumber.getBuildPlan();
@@ -69,7 +69,7 @@ public class BuildCommandTrigger implements ITriggerService<BuildCommand> {
             }
             success = waitOfAgentsResponse(buildCommand, System.currentTimeMillis(), System.currentTimeMillis());
             if (success) {
-                BuildCommand nextBuild = buildCommand.getNextBuild();
+                BuildCommand nextBuild = buildCommand.getNextBuildCommand();
                 if (nextBuild != null) {
                     trigger(nextBuild);
                 }
@@ -94,16 +94,16 @@ public class BuildCommandTrigger implements ITriggerService<BuildCommand> {
         }
         _persistenceService.beginTransaction();
         buildCommand = _buildCommandDao.getById(buildCommand.getId());
-        Map<String, Status> buildAgentStatus = buildCommand.getBuildAgentStatus();
+        Map<String, BuildStatus> buildAgentStatus = buildCommand.getBuildAgentStatus();
         _persistenceService.commitTransaction();
         _persistenceService.close();
         boolean success = true;
         Set<String> keySet = buildAgentStatus.keySet();
         for (String agentName : keySet) {
-            Status status = buildAgentStatus.get(agentName);
-            LOG.info("receive buildCommand [" + buildCommand.getCommand() + " (" + buildCommand.getId() + ")], buildAgent ["
-                    + agentName + "]: " + status);
-            switch (status) {
+            BuildStatus buildStatus = buildAgentStatus.get(agentName);
+            LOG.info("receive buildCommand [" + buildCommand.getCommand() + " (" + buildCommand.getId()
+                    + ")], buildAgent [" + agentName + "]: " + buildStatus);
+            switch (buildStatus) {
             case NOT_RUNNING:
             case RUNNING:
                 waitOfAgentsResponse(buildCommand, startTime, waitingTime + RESPONSE_WAITING_TIME);

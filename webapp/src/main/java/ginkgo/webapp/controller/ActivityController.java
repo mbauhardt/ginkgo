@@ -10,12 +10,9 @@ import ginkgo.webapp.persistence.model.BuildPlan;
 import ginkgo.webapp.persistence.model.Project;
 import ginkgo.webapp.persistence.model.Stage;
 import ginkgo.webapp.persistence.model.Step;
-import ginkgo.webapp.server.AgentRepository;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;

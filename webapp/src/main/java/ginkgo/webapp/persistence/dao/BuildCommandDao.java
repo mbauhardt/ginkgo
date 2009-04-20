@@ -21,7 +21,7 @@ public class BuildCommandDao extends BaseDao<BuildCommand> implements IBuildComm
     @SuppressWarnings("unchecked")
     public BuildCommand getFirstBuildCommand(BuildCommand buildCommand) {
         Query query = _persistenceService.createQuery("select bc from " + _clazz.getSimpleName()
-                + " as bc where bc._nextBuild._id = ?1");
+                + " as bc where bc._nextBuildCommand._id = ?1");
         query.setParameter(1, buildCommand.getId());
         List<BuildCommand> resultList = query.getResultList();
         if (!resultList.isEmpty()) {

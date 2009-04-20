@@ -54,6 +54,12 @@ public class Command implements Serializable {
     }
 
     public boolean execute(String command, String[] parameters, File directory) throws IOException {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
         int exitValue = 0;
         Runtime runtime = Runtime.getRuntime();
         Process process = runtime.exec(command, parameters, directory);

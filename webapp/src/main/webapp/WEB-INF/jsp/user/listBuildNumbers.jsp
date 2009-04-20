@@ -65,11 +65,13 @@
             <tr>
               <th scope="col">Build Plan</th>
               <th scope="col">Build Number</th>
+              <th scope="col">Build Status</th>
             </tr>
             <c:forEach items="${buildNumbers}" var="buildNumber">
             <tr>
                 <th scope="row" class="sub">${buildNumber.buildPlan.name}</th>
                 <td><a href="buildNumber.html?buildNumberId=${buildNumber.id}">${buildNumber.buildNumber}</a></td>
+                <td>${buildNumber.buildStatus}</td>
             </tr>
             </c:forEach>
           </tbody>

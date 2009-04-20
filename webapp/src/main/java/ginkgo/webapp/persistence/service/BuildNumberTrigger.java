@@ -1,9 +1,9 @@
 package ginkgo.webapp.persistence.service;
 
+import ginkgo.shared.BuildStatus;
 import ginkgo.webapp.persistence.dao.DaoException;
 import ginkgo.webapp.persistence.model.BuildCommand;
 import ginkgo.webapp.persistence.model.BuildNumber;
-import ginkgo.webapp.persistence.model.BuildCommand.Status;
 
 import java.util.Map;
 
@@ -33,7 +33,7 @@ public class BuildNumberTrigger implements ITriggerService<BuildNumber> {
         if (!LOCK) {
             LOCK = true;
             BuildCommand buildCommand = buildNumber.getBuildCommand();
-            Map<String, Status> buildAgentStatus = buildCommand.getBuildAgentStatus();
+            Map<String, BuildStatus> buildAgentStatus = buildCommand.getBuildAgentStatus();
             if (buildAgentStatus.isEmpty()) {
                 LOG.info("trigger build command: " + buildCommand.getId());
                 success = _triggerService.trigger(buildCommand);

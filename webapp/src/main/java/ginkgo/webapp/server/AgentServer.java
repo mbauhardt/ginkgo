@@ -2,13 +2,13 @@ package ginkgo.webapp.server;
 
 import ginkgo.api.IAgentServer;
 import ginkgo.api.IBuildAgent;
+import ginkgo.shared.BuildStatus;
 import ginkgo.shared.MessageConsumer;
 import ginkgo.shared.ProxyService;
 import ginkgo.webapp.persistence.PersistenceService;
 import ginkgo.webapp.persistence.dao.DaoException;
 import ginkgo.webapp.persistence.dao.IBuildCommandDao;
 import ginkgo.webapp.persistence.model.BuildCommand;
-import ginkgo.webapp.persistence.model.BuildCommand.Status;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,13 +81,12 @@ public class AgentServer implements IAgentServer, Runnable, IRegistration {
         return _repository.contains(agentName);
     }
 
-    public void executeStatus(String agentName, Long commandId, Boolean status) {
+    public void changeStatus(String agentName, Long commandId, BuildStatus status) {
         _persistenceService.beginTransaction();
         try {
             BuildCommand buildCommand = _buildCommandDao.getById(commandId);
-            Map<String, Status> buildAgentStatus = buildCommand.getBuildAgentStatus();
-            Status agentStatus = status ? Status.SUCCESS : Status.FAILURE;
-            buildAgentStatus.put(agentName, agentStatus);
+            Map<String, BuildStatus> buildAgentStatus = buildCommand.getBuildAgentStatus();
+            buildAgentStatus.put(agentName, status);
         } catch (DaoException e) {
             LOG.error("error while update status on buildAgent", e);
         }

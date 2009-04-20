@@ -2,6 +2,7 @@ package ginkgo.agent;
 
 import ginkgo.api.IAgentServer;
 import ginkgo.api.IBuildAgent;
+import ginkgo.shared.BuildStatus;
 import ginkgo.shared.Command;
 import ginkgo.shared.MessageConsumer;
 import ginkgo.shared.ProxyService;
@@ -67,12 +68,14 @@ public class BuildAgent implements IBuildAgent {
         try {
             LOG.info("execute: " + command);
             new File(_workingDirectory, buildPlanName).mkdirs();
+            _agentServer.changeStatus(_name, commandId, BuildStatus.RUNNING);
             boolean execute = commandObject.execute(command, new String[] {},
                     new File(_workingDirectory, buildPlanName));
-            _agentServer.executeStatus(_name, commandId, execute);
+            BuildStatus buildStatus = execute ? BuildStatus.SUCCESS : BuildStatus.FAILURE;
+            _agentServer.changeStatus(_name, commandId, buildStatus);
         } catch (IOException e) {
             LOG.error("error executing command: " + command, e);
-            _agentServer.executeStatus(_name, commandId, false);
+            _agentServer.changeStatus(_name, commandId, BuildStatus.FAILURE);
         }
     }
 
