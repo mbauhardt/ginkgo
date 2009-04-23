@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -84,5 +85,12 @@ public class BuildPlanController {
         buildPlan.setName(buildPlanCommand.getName());
         buildPlan.setProject(buildPlanCommand.getProject());
         return "redirect:listBuildPlans.html";
+    }
+
+    @RequestMapping(value = "/user/buildPlan.html", method = RequestMethod.GET)
+    public String buildPlanTree(Model model, @RequestParam("id") Long id) throws DaoException {
+        BuildPlan buildPlan = _buildPlanDao.getById(id);
+        model.addAttribute("buildPlan", buildPlan);
+        return "user/buildPlan";
     }
 }
