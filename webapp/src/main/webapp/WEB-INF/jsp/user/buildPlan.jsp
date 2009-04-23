@@ -10,18 +10,6 @@
 
 <link href="../css/my_layout.css" rel="stylesheet" type="text/css"/>
 
-<link rel="stylesheet" type="text/css" href="../css/yui/build/fonts/fonts-min.css" />
-<link rel="stylesheet" type="text/css" href="../css/yui/build/button/assets/skins/sam/button.css" />
-<link rel="stylesheet" type="text/css" href="../css/yui/build/container/assets/skins/sam/container.css" />
-<script type="text/javascript" src="../css/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="../css/yui/build/connection/connection-min.js"></script>
-<script type="text/javascript" src="../css/yui/build/element/element-min.js"></script>
-<script type="text/javascript" src="../css/yui/build/button/button-min.js"></script>
-<script type="text/javascript" src="../css/yui/build/dragdrop/dragdrop-min.js"></script>
-<script type="text/javascript" src="../css/yui/build/container/container-min.js"></script>
-
-
-
 
 <!--[if lte IE 7]>
 <link href="patches/patch_layout_draft.css" rel="stylesheet" type="text/css" />
@@ -72,7 +60,7 @@
                 <dl class="note">
                 <dt>Build Plan - ${buildPlan.name} &nbsp;&nbsp;&nbsp;
                     <span style="font-size:10px">
-                        <a href="#" id="">
+                        <a href="#">
                             <span>
                                 Edit | 
                             </span>
@@ -80,14 +68,14 @@
                     </span>
                     <span style="font-size:10px">
                         <a href="#">
-                            <span onClick="document.getElementById('newAction').style.visibility='hidden2'">
+                            <span>
                                 Delete | 
                             </span>
                         </a>
                     </span>
                     <span style="font-size:10px">
                         <a href="#">
-                            <span onClick="document.getElementById('newAction').style.visibility='hidden2'">
+                            <span>
                                 New Stage
                             </span>
                         </a>
@@ -99,21 +87,21 @@
                         <dt>Stage - ${stage.name} &nbsp;&nbsp;&nbsp;
                             <span style="font-size:10px">
                                 <a href="#">
-                                    <span onClick="document.getElementById('newAction').style.visibility='hidden2'">
+                                    <span>
                                         Edit | 
                                     </span>
                                 </a>
                             </span>
                             <span style="font-size:10px">
                                 <a href="#">
-                                    <span onClick="document.getElementById('newAction').style.visibility='hidden2'">
+                                    <span>
                                         Delete | 
                                     </span>
                                 </a>
                             </span>
                             <span style="font-size:10px">
                                 <a href="#">
-                                    <span onClick="document.getElementById('newAction').style.visibility='hidden2'">
+                                    <span>
                                         New Step
                                     </span>
                                 </a>
@@ -125,14 +113,14 @@
                                 <dt>Step - ${step.name} &nbsp;&nbsp;&nbsp;
                                     <span style="font-size:10px">
                                         <a href="#">
-                                            <span onClick="document.getElementById('newAction').style.visibility='hidden2'">
+                                            <span>
                                                 Edit | 
                                             </span>
                                         </a>
                                     </span>
                                     <span style="font-size:10px">
                                         <a href="#">
-                                            <span onClick="document.getElementById('newAction').style.visibility='hidden2'">
+                                            <span>
                                                 Delete 
                                             </span>
                                         </a>
