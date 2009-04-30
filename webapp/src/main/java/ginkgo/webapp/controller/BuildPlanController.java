@@ -1,18 +1,24 @@
 package ginkgo.webapp.controller;
 
 import ginkgo.webapp.controller.commandObjects.BuildPlanCommand;
+import ginkgo.webapp.controller.commandObjects.StageCommand;
+import ginkgo.webapp.controller.commandObjects.StepCommand;
 import ginkgo.webapp.controller.editor.BaseEditor;
 import ginkgo.webapp.persistence.dao.DaoException;
 import ginkgo.webapp.persistence.dao.IBuildPlanDao;
 import ginkgo.webapp.persistence.dao.IProjectDao;
+import ginkgo.webapp.persistence.dao.IStageDao;
 import ginkgo.webapp.persistence.model.BuildPlan;
 import ginkgo.webapp.persistence.model.Project;
+import ginkgo.webapp.persistence.model.Stage;
+import ginkgo.webapp.persistence.model.Step;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,11 +31,13 @@ public class BuildPlanController {
 
     private final IBuildPlanDao _buildPlanDao;
     private final IProjectDao _projectDao;
+    private final IStageDao _stageDao;
 
     @Autowired
-    public BuildPlanController(IBuildPlanDao buildPlanDao, IProjectDao projectDao) {
+    public BuildPlanController(IBuildPlanDao buildPlanDao, IProjectDao projectDao, IStageDao stageDao) {
         _buildPlanDao = buildPlanDao;
         _projectDao = projectDao;
+        _stageDao = stageDao;
     }
 
     @InitBinder
@@ -58,6 +66,27 @@ public class BuildPlanController {
         buildPlanCommand.setId(buildPlan.getId());
         buildPlanCommand.setName(buildPlan.getName());
         buildPlanCommand.setProject(buildPlan.getProject());
+
+        List<Stage> stages = buildPlan.getStages();
+        for (Stage stage : stages) {
+            StageCommand stageCommand = new StageCommand();
+            stageCommand.setId(stage.getId());
+            stageCommand.setName(stage.getName());
+            stageCommand.setBuildPlan(buildPlan);
+            buildPlanCommand.addStageCommand(stageCommand);
+            List<Step> steps = stage.getSteps();
+            for (Step step : steps) {
+                String name = step.getName();
+                String command = step.getCommand();
+                StepCommand stepCommand = new StepCommand();
+                stepCommand.setName(name);
+                stepCommand.setCommand(command);
+                stageCommand.addStepCommand(stepCommand);
+            }
+        }
+        StageCommand stageCommand = new StageCommand();
+        stageCommand.setBuildPlan(buildPlan);
+        buildPlanCommand.addStageCommand(stageCommand);
         return buildPlanCommand;
     }
 
@@ -89,8 +118,26 @@ public class BuildPlanController {
 
     @RequestMapping(value = "/user/buildPlan.html", method = RequestMethod.GET)
     public String buildPlanTree(Model model, @RequestParam("id") Long id) throws DaoException {
-        BuildPlan buildPlan = _buildPlanDao.getById(id);
-        model.addAttribute("buildPlan", buildPlan);
+        // BuildPlan buildPlan = _buildPlanDao.getById(id);
+        // model.addAttribute("buildPlanCommand", buildPlan);
         return "user/buildPlan";
     }
+
+    @RequestMapping(value = { "/user/editStage.html" }, method = RequestMethod.POST)
+    public String editStage(@ModelAttribute("buildPlanCommand") BuildPlanCommand buildPlanCommand,
+            @RequestParam(value = "listIndex", required = true) Integer listIndex) throws DaoException {
+        StageCommand stageCommand = buildPlanCommand.getStageCommands().get(listIndex);
+        Long id = stageCommand.getId();
+        Stage stage = null;
+        if (id == null) {
+            stage = new Stage();
+            _stageDao.makePersistent(stage);
+        } else {
+            stage = _stageDao.getById(id);
+        }
+        stage.setName(stageCommand.getName());
+        stage.setBuildPlan(stageCommand.getBuildPlan());
+        return "redirect:buildPlan.html?id=" + buildPlanCommand.getId();
+    }
+
 }

@@ -10,6 +10,11 @@
 
 <link href="../css/my_layout.css" rel="stylesheet" type="text/css"/>
 
+<!-- Combo-handled YUI CSS files: -->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/button/assets/skins/sam/button.css&2.7.0/build/container/assets/skins/sam/container.css">
+<!-- Combo-handled YUI JS files: -->
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/element/element-min.js&2.7.0/build/button/button-min.js&2.7.0/build/connection/connection-min.js&2.7.0/build/dragdrop/dragdrop-min.js&2.7.0/build/container/container-min.js"></script>
+
 
 <!--[if lte IE 7]>
 <link href="patches/patch_layout_draft.css" rel="stylesheet" type="text/css" />
@@ -58,7 +63,7 @@
 
                 &nbsp;    
                 <dl class="note">
-                <dt>Build Plan - ${buildPlan.name} &nbsp;&nbsp;&nbsp;
+                <dt>Build Plan - ${buildPlanCommand.name} &nbsp;&nbsp;&nbsp;
                     <span style="font-size:10px">
                         <a href="#">
                             <span>
@@ -82,35 +87,14 @@
                     </span>
                 </dt>
                 <dd>&nbsp;</dd>
-                <c:forEach items="${buildPlan.stages}" var="stage">
+                <c:set var="stageCommandCounter" value="-1" />
+                <c:forEach items="${buildPlanCommand.stageCommands}" var="stageCommand">
+                    <c:set var="stageCommandCounter" value="${stageCommandCounter+1}" />
                     <dl class="important">
-                        <dt>Stage - ${stage.name} &nbsp;&nbsp;&nbsp;
-                            <span style="font-size:10px">
-                                <a href="#">
-                                    <span>
-                                        Edit | 
-                                    </span>
-                                </a>
-                            </span>
-                            <span style="font-size:10px">
-                                <a href="#">
-                                    <span>
-                                        Delete | 
-                                    </span>
-                                </a>
-                            </span>
-                            <span style="font-size:10px">
-                                <a href="#">
-                                    <span>
-                                        New Step
-                                    </span>
-                                </a>
-                            </span>
-                        </dt>
-                        <dd>&nbsp;</dd>
-                        <c:forEach items="${stage.steps}" var="step">
+                        <%@ include file="/WEB-INF/jsp/user/includeEditStage.jsp" %>
+                        <c:forEach items="${buildPlanCommand.stageCommands[stageCommandCounter].stepCommands}" var="stepCommand">
                             <dl class="info">
-                                <dt>Step - ${step.name} &nbsp;&nbsp;&nbsp;
+                                <dt>Step - ${stepCommand.name} &nbsp;&nbsp;&nbsp;
                                     <span style="font-size:10px">
                                         <a href="#">
                                             <span>
@@ -126,8 +110,10 @@
                                         </a>
                                     </span>
                                 </dt>
-                                <dd>${step.command}</dd>
+                                <dd>${stepCommand.command}</dd>
                             </dl>
+
+
                         </c:forEach>
                     </dl>
                 </c:forEach>

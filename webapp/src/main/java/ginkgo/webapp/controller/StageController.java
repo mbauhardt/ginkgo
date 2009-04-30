@@ -64,24 +64,32 @@ public class StageController {
         return "user/listStages";
     }
 
-    @RequestMapping(value = { "/user/editStage.html" }, method = RequestMethod.GET)
-    public String editStage() throws DaoException {
-        return "user/editStage";
-    }
+//    @RequestMapping(value = { "/user/editStage.html" }, method = RequestMethod.GET)
+//    public String editStage() throws DaoException {
+//        return "user/editStage";
+//    }
 
-    @RequestMapping(value = { "/user/editStage.html" }, method = RequestMethod.POST)
-    public String editBuildPlan(@ModelAttribute("stageCommand") StageCommand stageCommand) throws DaoException {
-        Long id = stageCommand.getId();
-        Stage stage = null;
-        if (id == null) {
-            stage = new Stage();
-            _stageDao.makePersistent(stage);
-        } else {
-            stage = _stageDao.getById(id);
-        }
-        stage.setName(stageCommand.getName());
-        stage.setBuildPlan(stageCommand.getBuildPlan());
-        return "redirect:listStages.html";
-    }
+//    @RequestMapping(value = { "/user/editStage.html" }, method = RequestMethod.POST)
+//    public String editBuildPlan(@ModelAttribute("stageCommand") StageCommand stageCommand) throws DaoException {
+//        System.out.println("StageController.editBuildPlan() " +stageCommand.getName());
+//        Long id = stageCommand.getId();
+//        Stage stage = null;
+//        if (id == null) {
+//            stage = new Stage();
+//            _stageDao.makePersistent(stage);
+//        } else {
+//            stage = _stageDao.getById(id);
+//        }
+//        stage.setName(stageCommand.getName());
+//        stage.setBuildPlan(stageCommand.getBuildPlan());
+//        return "redirect:buildPlan.html?id="+stage.getBuildPlan().getId();
+//    }
+
+//    @RequestMapping(value = { "/user/editStage.html" }, method = RequestMethod.POST)
+//    public String editBuildPlan(@ModelAttribute("foo") StageCommand stageCommand
+//            ) throws DaoException {
+//        //System.out.println("StageController.editBuildPlan() " +buildPlanCommand.getStageCommands().get(0).getName());
+//        return "redirect:buildPlan.html?id=1";
+//    }
 
 }
