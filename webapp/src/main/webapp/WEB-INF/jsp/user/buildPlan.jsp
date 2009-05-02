@@ -60,7 +60,6 @@
         <div id="col3_content" class="clearfix">
           <!-- skip anchor: content -->
           <a id="content" name="content"></a>
-
                 &nbsp;    
                 <dl class="note">
                 <dt>Build Plan - ${buildPlanCommand.name} &nbsp;&nbsp;&nbsp;
@@ -79,9 +78,9 @@
                         </a>
                     </span>
                     <span style="font-size:10px">
-                        <a href="#">
+                        <a href="#" id="showEditStage${maxStages}">
                             <span>
-                                New Stage
+                                Add Stage
                             </span>
                         </a>
                     </span>
@@ -90,32 +89,7 @@
                 <c:set var="stageCommandCounter" value="-1" />
                 <c:forEach items="${buildPlanCommand.stageCommands}" var="stageCommand">
                     <c:set var="stageCommandCounter" value="${stageCommandCounter+1}" />
-                    <dl class="important">
                         <%@ include file="/WEB-INF/jsp/user/includeEditStage.jsp" %>
-                        <c:forEach items="${buildPlanCommand.stageCommands[stageCommandCounter].stepCommands}" var="stepCommand">
-                            <dl class="info">
-                                <dt>Step - ${stepCommand.name} &nbsp;&nbsp;&nbsp;
-                                    <span style="font-size:10px">
-                                        <a href="#">
-                                            <span>
-                                                Edit | 
-                                            </span>
-                                        </a>
-                                    </span>
-                                    <span style="font-size:10px">
-                                        <a href="#">
-                                            <span>
-                                                Delete 
-                                            </span>
-                                        </a>
-                                    </span>
-                                </dt>
-                                <dd>${stepCommand.command}</dd>
-                            </dl>
-
-
-                        </c:forEach>
-                    </dl>
                 </c:forEach>
                 </dl>
         

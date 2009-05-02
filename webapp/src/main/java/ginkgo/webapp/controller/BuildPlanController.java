@@ -118,8 +118,9 @@ public class BuildPlanController {
 
     @RequestMapping(value = "/user/buildPlan.html", method = RequestMethod.GET)
     public String buildPlanTree(Model model, @RequestParam("id") Long id) throws DaoException {
-        // BuildPlan buildPlan = _buildPlanDao.getById(id);
-        // model.addAttribute("buildPlanCommand", buildPlan);
+        BuildPlan buildPlan = _buildPlanDao.getById(id);
+        int size = buildPlan.getStages().size();
+        model.addAttribute("maxStages", size);
         return "user/buildPlan";
     }
 
@@ -140,4 +141,10 @@ public class BuildPlanController {
         return "redirect:buildPlan.html?id=" + buildPlanCommand.getId();
     }
 
+    @RequestMapping(value = { "/user/deleteStage.html" }, method = RequestMethod.POST)
+    public String deleteStage(@ModelAttribute("buildPlanCommand") BuildPlanCommand buildPlanCommand,
+            @RequestParam(value = "listIndex", required = true) Integer listIndex) throws DaoException {
+        System.out.println("BuildPlanController.deleteStage()");
+        return "redirect:buildPlan.html?id=" + buildPlanCommand.getId();
+    }
 }

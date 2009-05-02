@@ -72,7 +72,7 @@
             <tr>
                 <th scope="row" class="sub">${buildPlan.project.name}</th>
                 <td><a href="listBuildNumbers.html?buildPlanId=${buildPlan.id}">${buildPlan.name}</a></td>
-                <td><a href="editBuildPlan.html?id=${buildPlan.id}">Edit</a></td>
+                <td><a href="buildPlan.html?id=${buildPlan.id}">Edit</a></td>
                 <td>
                     <form action="deleteBuildPlan.html" method="POST">
                         <input type="hidden" name="id" value="${buildPlan.id}"/>
