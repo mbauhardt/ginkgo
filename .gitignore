@@ -3,4 +3,8 @@
 .gradle
 .project
 .settings
-build
+api/build
+shared/build
+vcs/svn/build
+agent/build
+webapp/build
