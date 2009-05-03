@@ -66,13 +66,11 @@
               <th scope="col">Project</th>
               <th scope="col">Build Plan</th>
               <th scope="col">Action</th>
-              <th scope="col">Action</th>
             </tr>
             <c:forEach items="${buildPlans}" var="buildPlan">
             <tr>
                 <th scope="row" class="sub">${buildPlan.project.name}</th>
-                <td><a href="listBuildNumbers.html?buildPlanId=${buildPlan.id}">${buildPlan.name}</a></td>
-                <td><a href="buildPlan.html?id=${buildPlan.id}">Edit</a></td>
+                <td><a href="buildPlan.html?id=${buildPlan.id}">${buildPlan.name}</a></td>
                 <td>
                     <form action="deleteBuildPlan.html" method="POST">
                         <input type="hidden" name="id" value="${buildPlan.id}"/>

@@ -11,9 +11,47 @@
 <link href="../css/my_layout.css" rel="stylesheet" type="text/css"/>
 
 <!-- Combo-handled YUI CSS files: -->
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/button/assets/skins/sam/button.css&2.7.0/build/container/assets/skins/sam/container.css">
+<link rel="stylesheet" type="text/css" href="../css/yui/build/button/assets/skins/sam/button.css"></link>
+<link rel="stylesheet" type="text/css" href="../css/yui/build/container/assets/skins/sam/container.css"></link>
 <!-- Combo-handled YUI JS files: -->
-<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/element/element-min.js&2.7.0/build/button/button-min.js&2.7.0/build/connection/connection-min.js&2.7.0/build/dragdrop/dragdrop-min.js&2.7.0/build/container/container-min.js"></script>
+<script type="text/javascript" src="../css/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="../css/yui/build/element/element-min.js"></script>
+<script type="text/javascript" src="../css/yui/build/button/button-min.js"></script>
+<script type="text/javascript" src="../css/yui/build/connection/connection-min.js"></script>
+<script type="text/javascript" src="../css/yui/build/dragdrop/dragdrop-min.js"></script>
+<script type="text/javascript" src="../css/yui/build/container/container-min.js"></script>
+
+<script>
+YAHOO.namespace("example.container");
+
+function initRunBuildPlan() {
+var handleYes = function() {
+    this.form.submit();
+};
+
+var handleNo = function() {
+    this.hide();
+};
+
+YAHOO.example.container.runBuildPlan = 
+    new YAHOO.widget.SimpleDialog("runBuildPlan", 
+             { width: "300px",
+               fixedcenter: true,
+               visible: false,
+               draggable: false,
+               close: true,
+               text: "Do you want to continue?",
+               icon: YAHOO.widget.SimpleDialog.ICON_HELP,
+               constraintoviewport: true,
+               buttons: [ { text:"Yes", handler:handleYes, isDefault:true },
+                          { text:"No",  handler:handleNo } ]
+             } );
+YAHOO.example.container.runBuildPlan.render();
+YAHOO.util.Event.addListener("showRunBuildPlan", "click", YAHOO.example.container.runBuildPlan.show, YAHOO.example.container.runBuildPlan, true);
+             
+}
+YAHOO.util.Event.onDOMReady(initRunBuildPlan);             
+</script>
 
 
 <!--[if lte IE 7]>
@@ -61,6 +99,8 @@
           <!-- skip anchor: content -->
           <a id="content" name="content"></a>
                 &nbsp;    
+                <c:set var="maxStages" value="${fn:length(buildPlanCommand.stageCommands)}"/>
+                <c:set var="maxStages" value="${maxStages-1}"/>
                 <dl class="note">
                 <dt>Build Plan - ${buildPlanCommand.name} &nbsp;&nbsp;&nbsp;
                     <span style="font-size:10px">
@@ -80,7 +120,21 @@
                     <span style="font-size:10px">
                         <a href="#" id="showEditStage${maxStages}">
                             <span>
-                                Add Stage
+                                Add Stage |
+                            </span>
+                        </a>
+                    </span>
+                    <span style="font-size:10px">
+                        <a href="listBuildNumbers.html?buildPlanId=${buildPlanCommand.id}">
+                            <span>
+                                Latest Build |
+                            </span>
+                        </a>
+                    </span>
+                    <span style="font-size:10px">
+                        <a href="#" id="showRunBuildPlan">
+                            <span>
+                                Run Build Plan
                             </span>
                         </a>
                     </span>
@@ -89,9 +143,15 @@
                 <c:set var="stageCommandCounter" value="-1" />
                 <c:forEach items="${buildPlanCommand.stageCommands}" var="stageCommand">
                     <c:set var="stageCommandCounter" value="${stageCommandCounter+1}" />
-                        <%@ include file="/WEB-INF/jsp/user/includeEditStage.jsp" %>
+                    <%@ include file="/WEB-INF/jsp/user/includeEditStage.jsp" %>
                 </c:forEach>
                 </dl>
+        
+                <div id="runBuildPlan">
+                    <form:form method="post" action="runBuildPlan.html" cssClass="yform">
+                        <input type="hidden" name="id" value="${buildPlanCommand.id}" />
+                    </form:form>
+                </div>
         
         </div>
         <!-- IE column clearing -->

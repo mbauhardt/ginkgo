@@ -10,13 +10,9 @@ function init() {
     };
     
     var handleSuccess = function(o) {
-        var response = o.responseText;
-        response = response.split("<!")[0];
-        document.getElementById("errorEditStage${stageCommandCounter}").innerHTML = response;
     };
     
     var handleFailure = function(o) {
-        alert("Submission failed: ");
     };
 
     YAHOO.example.container.editStage${stageCommandCounter} = new YAHOO.widget.Dialog("editStage${stageCommandCounter}", 
@@ -39,7 +35,9 @@ function init() {
 YAHOO.util.Event.onDOMReady(init);
 </script>
 
-<c:if test="${stageCommandCounter < maxStages}"> 
+<c:if test="${stageCommandCounter < maxStages}">
+<c:set var="maxSteps" value="${fn:length(buildPlanCommand.stageCommands[stageCommandCounter].stepCommands)}" />
+<c:set var="maxSteps" value="${maxSteps-1}" />
 <dl class="important">
     <dt>Stage - ${stageCommand.name} &nbsp;&nbsp;&nbsp;
         <span style="font-size:10px">
@@ -57,34 +55,18 @@ YAHOO.util.Event.onDOMReady(init);
             </a>
         </span>
         <span style="font-size:10px">
-            <a href="#">
+            <a href="#" id="showEditStep_${stageCommandCounter}_${maxSteps}">
                 <span>
-                    New Step
+                    Add Step
                 </span>
             </a>
         </span>
     </dt>
     <dd>&nbsp;</dd>
+    <c:set var="stepCommandCounter" value="-1" />
     <c:forEach items="${buildPlanCommand.stageCommands[stageCommandCounter].stepCommands}" var="stepCommand">
-    <dl class="info">
-        <dt>Step - ${stepCommand.name} &nbsp;&nbsp;&nbsp;
-            <span style="font-size:10px">
-                <a href="#">
-                    <span>
-                        Edit | 
-                    </span>
-                </a>
-            </span>
-            <span style="font-size:10px">
-                <a href="#">
-                    <span>
-                        Delete 
-                    </span>
-                </a>
-            </span>
-        </dt>
-        <dd>${stepCommand.command}</dd>
-    </dl>
+        <c:set var="stepCommandCounter" value="${stepCommandCounter+1}" />
+        <%@ include file="/WEB-INF/jsp/user/includeEditStep.jsp" %>
     </c:forEach>
  </dl>
 </c:if>
@@ -101,7 +83,7 @@ YAHOO.util.Event.onDOMReady(init);
     </fieldset>
     <form:hidden path="stageCommands[${stageCommandCounter}].id" />
     <form:hidden path="id" />
-    <input type="hidden" name="listIndex" value="${stageCommandCounter}" />
+    <input type="hidden" name="stageIndex" value="${stageCommandCounter}" />
 </form:form>
 </div>
 
@@ -143,7 +125,7 @@ YAHOO.util.Event.onDOMReady(initDelete);
 <form:form method="post" action="deleteStage.html" modelAttribute="buildPlanCommand" cssClass="yform">
     <form:hidden path="stageCommands[${stageCommandCounter}].id" />
     <form:hidden path="id" />
-    <input type="hidden" name="listIndex" value="${stageCommandCounter}" />
+    <input type="hidden" name="stageIndex" value="${stageCommandCounter}" />
 </form:form>
 </div>
 

@@ -2,19 +2,23 @@ package ginkgo.webapp.persistence.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 @Entity
 public class BuildPlan extends BaseName {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "buildPlan_fk")
-    private List<Stage> _stages = new ArrayList<Stage>();
+    @OrderBy("_id")
+    private Set<Stage> _stages = new TreeSet<Stage>();
 
     @ManyToOne
     @JoinColumn(name = "project_fk")
@@ -35,11 +39,11 @@ public class BuildPlan extends BaseName {
         _project = project;
     }
 
-    public List<Stage> getStages() {
+    public Set<Stage> getStages() {
         return _stages;
     }
 
-    public void setStages(List<Stage> stages) {
+    public void setStages(Set<Stage> stages) {
         _stages = stages;
     }
 

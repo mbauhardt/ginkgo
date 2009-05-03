@@ -1,9 +1,9 @@
 package ginkgo.webapp.controller.commandObjects;
 
+import ginkgo.webapp.persistence.model.Stage;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import ginkgo.webapp.persistence.model.Stage;
 
 public class StageCommand extends Stage {
 
