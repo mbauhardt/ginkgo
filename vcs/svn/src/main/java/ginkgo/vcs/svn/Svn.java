@@ -1,54 +1,18 @@
 package ginkgo.vcs.svn;
 
-import ginkgo.api.CommandPipe;
-import ginkgo.api.IVcsable;
+import ginkgo.api.VcsPlugin;
 import ginkgo.shared.InvalidArgumentException;
 
-import java.io.IOException;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class Svn implements IVcsable {
+public class Svn extends VcsPlugin {
 
-    private static final long serialVersionUID = -8964376633239542853L;
-
-    private final SvnCheckoutCommand _checkoutCommand;
-
-    private final CommandPipe _commandPipe = new CommandPipe();
-
-    @Autowired
-    public Svn(SvnCheckoutCommand checkoutCommand) {
-        _checkoutCommand = checkoutCommand;
-    }
-
-    public void branch() {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void checkout() throws IOException {
-        //_commandPipe.execute(_checkoutCommand);
-    }
-
-    public void tag() {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void update() {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void parametrize(String... parameters) throws InvalidArgumentException {
-        parametrizeCheckoutCommand(parameters[0]);
-    }
-
-    private void parametrizeCheckoutCommand(String trunk) throws InvalidArgumentException {
-        _checkoutCommand.parametrize(trunk, "");
-    }
+    private String _checkoutUrl;
+    private String _branchestUrl;
+    private String _tagsUrl;
+    private String _userName;
+    private String _password;
 
     public String getName() {
         return "SVN";
@@ -59,11 +23,35 @@ public class Svn implements IVcsable {
     }
 
     public String[] getParameterNames() {
-        return new String[] { "Trunk Url", "Branches Url", "Tags Url", "User Name", "Password" };
+        return new String[] { "Checkout Url", "Branches Url", "Tags Url", "User Name", "Password" };
 
     }
 
-    public IVcsable newInstance() {
-        return new Svn(_checkoutCommand);
+    public void getBranchCommand() {
+        // TODO Auto-generated method stub
+
     }
+
+    public String getCheckoutCommand() {
+        return "svn checkout " + _checkoutUrl;
+    }
+
+    public void getTagCommand() {
+        // TODO Auto-generated method stub
+
+    }
+
+    public String getUpdateCommand() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public void parametrize(String... parameters) throws InvalidArgumentException {
+        _checkoutUrl = parameters[0];
+        _branchestUrl = parameters[1];
+        _tagsUrl = parameters[2];
+        _userName = parameters[3];
+        _password = parameters[4];
+    }
+
 }

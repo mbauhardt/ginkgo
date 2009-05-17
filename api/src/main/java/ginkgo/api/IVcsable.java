@@ -2,27 +2,22 @@ package ginkgo.api;
 
 import ginkgo.shared.InvalidArgumentException;
 
-import java.io.IOException;
-import java.io.Serializable;
-
-public interface IVcsable extends Serializable {
+public interface IVcsable {
 
     String getName();
 
     String getDescription();
 
-    void checkout() throws IOException;
+    String getCheckoutCommand();
 
-    void update();
+    String getUpdateCommand();
 
-    void tag();
+    void getTagCommand();
 
-    void branch();
+    void getBranchCommand();
 
     void parametrize(String... parameters) throws InvalidArgumentException;
 
     String[] getParameterNames();
-
-    IVcsable newInstance();
 
 }

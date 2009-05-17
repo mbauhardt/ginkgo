@@ -5,10 +5,11 @@ import ginkgo.webapp.persistence.model.Project;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ProjectCommand extends Project {
 
     private List<ConfigurationTupleCommand> _configurationTupleCommands = new ArrayList<ConfigurationTupleCommand>();
+
+    private List<BuildPlanCommand> _buildPlanCommands = new ArrayList<BuildPlanCommand>();
 
     public void setId(Long id) {
         _id = id;
@@ -26,4 +27,15 @@ public class ProjectCommand extends Project {
         _configurationTupleCommands.add(command);
     }
 
+    public List<BuildPlanCommand> getBuildPlanCommands() {
+        return _buildPlanCommands;
+    }
+
+    public void setBuildPlanCommands(List<BuildPlanCommand> buildPlanCommands) {
+        _buildPlanCommands = buildPlanCommands;
+    }
+
+    public void addBuildPlanCommand(BuildPlanCommand buildPlanCommand) {
+        _buildPlanCommands.add(buildPlanCommand);
+    }
 }

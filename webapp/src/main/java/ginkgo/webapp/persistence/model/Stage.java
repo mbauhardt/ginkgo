@@ -1,7 +1,7 @@
 package ginkgo.webapp.persistence.model;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,7 +16,7 @@ public class Stage extends BaseName {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "stage_fk")
     @OrderBy("_id")
-    private Set<Step> _steps = new TreeSet<Step>();
+    private List<Step> _steps = new ArrayList<Step>();
 
     @ManyToOne
     @JoinColumn(name = "buildPlan_fk")
@@ -25,11 +25,11 @@ public class Stage extends BaseName {
     public Stage() {
     }
 
-    public Set<Step> getSteps() {
+    public List<Step> getSteps() {
         return _steps;
     }
 
-    public void setSteps(Set<Step> steps) {
+    public void setSteps(List<Step> steps) {
         _steps = steps;
     }
 

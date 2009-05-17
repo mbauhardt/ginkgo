@@ -1,5 +1,8 @@
 package ginkgo.webapp.controller;
 
+import ginkgo.api.VcsPlugin;
+import ginkgo.shared.InvalidArgumentException;
+import ginkgo.webapp.PluginRepository;
 import ginkgo.webapp.controller.commandObjects.BuildPlanCommand;
 import ginkgo.webapp.controller.commandObjects.StageCommand;
 import ginkgo.webapp.controller.commandObjects.StepCommand;
@@ -40,16 +43,18 @@ public class BuildPlanController {
     private final IStepDao _stepDao;
     private final IBuildNumberDao _buildNumberDao;
     private final IBuildDao _buildDao;
+    private final PluginRepository _pluginRepository;
 
     @Autowired
     public BuildPlanController(IBuildPlanDao buildPlanDao, IProjectDao projectDao, IStageDao stageDao,
-            IStepDao stepDao, IBuildNumberDao buildNumberDao, IBuildDao buildDao) {
+            IStepDao stepDao, IBuildNumberDao buildNumberDao, IBuildDao buildDao, PluginRepository pluginRepository) {
         _buildPlanDao = buildPlanDao;
         _projectDao = projectDao;
         _stageDao = stageDao;
         _stepDao = stepDao;
         _buildNumberDao = buildNumberDao;
         _buildDao = buildDao;
+        _pluginRepository = pluginRepository;
     }
 
     @InitBinder
@@ -86,7 +91,7 @@ public class BuildPlanController {
             stageCommand.setName(stage.getName());
             stageCommand.setBuildPlan(buildPlan);
             buildPlanCommand.addStageCommand(stageCommand);
-            Set<Step> steps = stage.getSteps();
+            List<Step> steps = stage.getSteps();
             for (Step step : steps) {
                 StepCommand stepCommand = new StepCommand();
                 stepCommand.setId(step.getId());
@@ -115,17 +120,40 @@ public class BuildPlanController {
 
     @RequestMapping(value = { "/user/editBuildPlan.html" }, method = RequestMethod.POST)
     public String editBuildPlan(@ModelAttribute("buildPlanCommand") BuildPlanCommand buildPlanCommand)
-            throws DaoException {
+            throws DaoException, InvalidArgumentException {
         Long id = buildPlanCommand.getId();
         BuildPlan buildPlan = null;
         if (id == null) {
             buildPlan = new BuildPlan();
+            Project project = buildPlanCommand.getProject();
+
+            String vcs = project.getVcs();
+            VcsPlugin vcsPlugin = _pluginRepository.create(vcs);
+            String[] parameters = null;
+            vcsPlugin.parametrize(parameters);
+            String checkoutCommand = vcsPlugin.getCheckoutCommand();
+            String updateCommand = vcsPlugin.getUpdateCommand();
+
+            Stage stage = new Stage();
+            stage.setName("Vcs Prepare");
+
+            Step checkoutStep = new Step();
+            checkoutStep.setName("checkout project from vcs");
+            checkoutStep.setCommand(checkoutCommand);
+            stage.addStep(checkoutStep);
+
+            Step updateStep = new Step();
+            updateStep.setName("update project");
+            updateStep.setCommand(updateCommand);
+            stage.addStep(updateStep);
+
+            buildPlan.addStage(stage);
+
             _buildPlanDao.makePersistent(buildPlan);
         } else {
             buildPlan = _buildPlanDao.getById(id);
         }
         buildPlan.setName(buildPlanCommand.getName());
-        buildPlan.setProject(buildPlanCommand.getProject());
         return "redirect:listBuildPlans.html";
     }
 
@@ -159,7 +187,7 @@ public class BuildPlanController {
         StageCommand stageCommand = stageCommands.get(stageIndex);
         Long id = stageCommand.getId();
         Stage stageById = _stageDao.getById(id);
-        Set<Step> steps = stageById.getSteps();
+        List<Step> steps = stageById.getSteps();
         for (Step step : steps) {
             _stepDao.makeTransient(step);
         }
@@ -223,7 +251,7 @@ public class BuildPlanController {
         Set<Stage> stages = buildPlan.getStages();
         Long parentBuildId = -1L;
         for (Stage stage : stages) {
-            Set<Step> steps = stage.getSteps();
+            List<Step> steps = stage.getSteps();
             for (Step step : steps) {
                 String command = step.getCommand();
                 BuildCommand nextBuild = new BuildCommand();

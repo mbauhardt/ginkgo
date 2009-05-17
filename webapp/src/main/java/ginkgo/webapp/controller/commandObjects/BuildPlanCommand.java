@@ -9,6 +9,8 @@ public class BuildPlanCommand extends BuildPlan {
 
     private List<StageCommand> _stageCommands = new ArrayList<StageCommand>();
 
+    private ProjectCommand _projectCommand;
+
     public void setId(Long id) {
         _id = id;
     }
@@ -24,4 +26,13 @@ public class BuildPlanCommand extends BuildPlan {
     public void addStageCommand(StageCommand stageCommand) {
         _stageCommands.add(stageCommand);
     }
+
+    public ProjectCommand getProjectCommand() {
+        return _projectCommand;
+    }
+
+    public void setProjectCommand(ProjectCommand projectCommand) {
+        _projectCommand = projectCommand;
+    }
+
 }

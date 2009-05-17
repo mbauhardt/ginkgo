@@ -7,7 +7,7 @@ import ginkgo.shared.InvalidArgumentException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SvnCheckoutCommand implements ICommandable, IParameterValidatable {
+public class SvnCheckoutCommand  implements ICommandable, IParameterValidatable  {
 
     private static final long serialVersionUID = 4399094581044836994L;
 

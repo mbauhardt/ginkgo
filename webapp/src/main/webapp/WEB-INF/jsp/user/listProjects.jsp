@@ -59,28 +59,45 @@
                       Saved Projects
                     </caption>
           <thead>
-            <tr><th scope="col" colspan="3"><a href="editProject.html">Add Project</a></th></tr>
+            <tr><th scope="col" colspan="4"><a href="editProject.html">Add Project</a></th></tr>
           </thead>
           <tbody>
             <tr>
               <th scope="col">Project</th>
+              <th scope="col">Build Plan</th>
               <th scope="col">Action</th>
               <th scope="col">Action</th>
             </tr>
             <c:forEach items="${projects}" var="project">
-            <tr>
-                <th scope="row" class="sub">${project.name}</th>
-                <td><a href="editProject.html?id=${project.id}">Edit</a></td>
-                <td>
-                    <form action="deleteProject.html" method="POST">
-                        <input type="hidden" name="id" value="${project.id}"/>
-                        <input type="submit" value="Delete"/>
-                    </form>
-                </td>
-            </tr>
+                <c:forEach items="${project.buildPlans}" var="buildPlan">
+                    <tr>
+                        <th scope="row" class="sub">${buildPlan.project.name}</th>
+                        <td>${buildPlan.name}</td>
+                        <td><a href="editProject.html?id=${project.id}">Edit</a></td>
+                        <td>
+                            <form action="deleteProject.html" method="POST">
+                                <input type="hidden" name="id" value="${project.id}"/>
+                                <input type="submit" value="Delete"/>
+                            </form>
+                        </td>
+                    </tr>
+                </c:forEach>
             </c:forEach>
           </tbody>
         </table>
+
+        <div id="createBuildPlan">
+        <form:form method="post" action="editBuildPlan.html" modelAttribute="buildPlanCommand" cssClass="yform">
+            <fieldset>
+                <legend>Create Build Plan</legend>
+                <div class="type-text">
+                    <label for="name">Name</label>
+                    <form:input path="name" />
+                </div>
+            </fieldset>
+            <input type="hidden" name="project" value="${project.id}" />
+        </form:form>
+        </div>
           
           
           </div>

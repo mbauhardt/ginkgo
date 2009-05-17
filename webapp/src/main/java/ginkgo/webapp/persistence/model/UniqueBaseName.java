@@ -4,12 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public class BaseName extends Base {
+public class UniqueBaseName extends Base {
 
-    @Column(unique = false)
+    @Column(unique = true)
     private String _name;
 
-    public BaseName() {
+    public UniqueBaseName() {
     }
 
     public String getName() {

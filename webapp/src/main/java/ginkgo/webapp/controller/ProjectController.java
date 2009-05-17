@@ -1,13 +1,22 @@
 package ginkgo.webapp.controller;
 
-import ginkgo.api.IVcsable;
+import ginkgo.api.VcsPlugin;
+import ginkgo.shared.InvalidArgumentException;
+import ginkgo.webapp.PluginRepository;
+import ginkgo.webapp.controller.commandObjects.BuildPlanCommand;
 import ginkgo.webapp.controller.commandObjects.ConfigurationTupleCommand;
 import ginkgo.webapp.controller.commandObjects.ProjectCommand;
 import ginkgo.webapp.persistence.dao.DaoException;
+import ginkgo.webapp.persistence.dao.IBuildPlanDao;
 import ginkgo.webapp.persistence.dao.IConfigurationTupleDao;
 import ginkgo.webapp.persistence.dao.IProjectDao;
+import ginkgo.webapp.persistence.dao.IStageDao;
+import ginkgo.webapp.persistence.dao.IStepDao;
+import ginkgo.webapp.persistence.model.BuildPlan;
 import ginkgo.webapp.persistence.model.ConfigurationTuple;
 import ginkgo.webapp.persistence.model.Project;
+import ginkgo.webapp.persistence.model.Stage;
+import ginkgo.webapp.persistence.model.Step;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,20 +34,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ProjectController {
 
     private final IProjectDao _projectDao;
-    private final IVcsable[] _vcsables;
     private final IConfigurationTupleDao _configurationTupleDao;
+    private final VcsPlugin[] _vcsPlugins;
+    private final IBuildPlanDao _buildPlanDao;
+    private final PluginRepository _pluginRepository;
+    private final IStageDao _stageDao;
+    private final IStepDao _stepDao;
 
     @Autowired
-    public ProjectController(IProjectDao projectDao, IConfigurationTupleDao configurationTupleDao, IVcsable... vcsables) {
+    public ProjectController(PluginRepository pluginRepository, IBuildPlanDao buildPlanDao, IStageDao stageDao, IStepDao stepDao, IProjectDao projectDao, IConfigurationTupleDao configurationTupleDao,
+            VcsPlugin... vcsPlugins) {
+        _pluginRepository = pluginRepository;
+        _buildPlanDao = buildPlanDao;
+        _stageDao = stageDao;
+        _stepDao = stepDao;
         _projectDao = projectDao;
         _configurationTupleDao = configurationTupleDao;
-        _vcsables = vcsables;
+        _vcsPlugins = vcsPlugins;
     }
 
     @ModelAttribute("vcsList")
     public List<String> injectVcs() {
         List<String> list = new ArrayList<String>();
-        for (IVcsable vcs : _vcsables) {
+        for (VcsPlugin vcs : _vcsPlugins) {
             list.add(vcs.getName());
         }
         return list;
@@ -47,6 +65,47 @@ public class ProjectController {
     @ModelAttribute("projects")
     public List<Project> injectProjects() throws DaoException {
         return _projectDao.getAll();
+    }
+
+    @ModelAttribute("buildPlanCommand")
+    public BuildPlanCommand injectBuildPlan() {
+        return new BuildPlanCommand();
+    }
+
+    @RequestMapping(value = "/user/addBuildPlan.html", method = RequestMethod.POST)
+    public String addBuildPlan(@ModelAttribute("buildPlanCommand") BuildPlanCommand buildPlanCommand, @RequestParam("projectId") Long projectId) throws DaoException, InvalidArgumentException {
+        Project project = _projectDao.getById(projectId);
+        BuildPlan buildPlan = new BuildPlan();
+        buildPlan.setName(buildPlanCommand.getName());
+        
+        String vcs = project.getVcs();
+        VcsPlugin vcsPlugin = _pluginRepository.create(vcs);
+//        String[] parameters=null;
+//        vcsPlugin.parametrize(parameters);
+        String checkoutCommand = vcsPlugin.getCheckoutCommand();
+        String updateCommand = vcsPlugin.getUpdateCommand();
+        
+        Stage stage = new Stage();
+        stage.setName("Vcs Prepare");
+        
+        Step checkoutStep = new Step();
+        checkoutStep.setName("checkout project from vcs");
+        checkoutStep.setCommand(checkoutCommand);
+        stage.addStep(checkoutStep);
+        
+        Step updateStep = new Step();
+        updateStep.setName("update project");
+        updateStep.setCommand(updateCommand);
+        stage.addStep(updateStep);
+        
+        buildPlan.addStage(stage);
+        
+        _stepDao.makePersistent(checkoutStep);
+        _stepDao.makePersistent(updateStep);
+        _stageDao.makePersistent(stage);
+        _buildPlanDao.makePersistent(buildPlan);
+        project.addBuildPlan(buildPlan);
+        return "redirect:/user/projects.html";
     }
 
     @ModelAttribute(value = "projectCommand")
@@ -70,9 +129,9 @@ public class ProjectController {
         }
 
         if (projectCommand.getConfigurationTupleCommands().isEmpty()) {
-            for (IVcsable vcsable : _vcsables) {
-                if (vcsable.getName().equalsIgnoreCase(projectCommand.getVcs())) {
-                    String[] parameterNames = vcsable.getParameterNames();
+            for (VcsPlugin vcsPlugin : _vcsPlugins) {
+                if (vcsPlugin.getName().equalsIgnoreCase(projectCommand.getVcs())) {
+                    String[] parameterNames = vcsPlugin.getParameterNames();
                     for (String parameter : parameterNames) {
                         ConfigurationTupleCommand command = new ConfigurationTupleCommand();
                         command.setTupleKey(parameter);
@@ -88,6 +147,11 @@ public class ProjectController {
     @RequestMapping(value = "/user/listProjects.html", method = RequestMethod.GET)
     public String listProjects() throws DaoException {
         return "user/listProjects";
+    }
+
+    @RequestMapping(value = "/user/projects.html", method = RequestMethod.GET)
+    public String listProjects2() throws DaoException {
+        return "user/projects";
     }
 
     @RequestMapping(value = { "/user/editProject.html" }, method = RequestMethod.GET)

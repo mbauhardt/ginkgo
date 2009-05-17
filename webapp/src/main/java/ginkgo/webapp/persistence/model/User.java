@@ -3,7 +3,7 @@ package ginkgo.webapp.persistence.model;
 import javax.persistence.Entity;
 
 @Entity
-public class User extends BaseName {
+public class User extends UniqueBaseName {
 
     public static enum Role {
         GUEST("GUEST"), USER("USER"), ADMIN("ADMIN");
