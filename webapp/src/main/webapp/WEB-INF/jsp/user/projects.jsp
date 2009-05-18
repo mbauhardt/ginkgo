@@ -4,7 +4,7 @@
 <html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
-        <title>Example: Website Left Nav With Submenus Built From Markup (YUI Library)</title>
+        <title>Projects</title>
         
         <!-- Standard reset, fonts and grids -->
 
@@ -64,7 +64,7 @@
         <div id="doc" class="yui-t1">
             <div id="hd">
                 <!-- start: your content here -->
-                    <h1>Example: Website Left Nav With Submenus Built From Markup (YUI Library)</h1>
+                    <h1>HEADER</h1>
                 <!-- end: your content here -->
             </div>
             <div id="bd">
@@ -72,6 +72,7 @@
                 <!-- start: primary column from outer template -->
                 <div id="yui-main">
                     <div class="yui-b">
+                        <%@ include file="/WEB-INF/jsp/topNavigation.jsp" %>                    
                         <c:forEach items="${projects}" var="project">
                             <div id="addBuildPlan_${project.id}">
                             <form:form method="post" action="addBuildPlan.html" modelAttribute="buildPlanCommand" >
@@ -195,7 +196,7 @@
             </div>
             <div id="ft">
 
-                <p>FOOTER: Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas sit amet metus. Nunc quam elit, posuere nec, auctor in, rhoncus quis, dui. Aliquam erat volutpat. Ut dignissim, massa sit amet dignissim cursus, quam lacus feugiat.</p>
+                <p>FOOTER</p>
 
             </div>
         </div>

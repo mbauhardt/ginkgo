@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping(value = "/user/listBuildAgents.html")
+@RequestMapping(value = "/user/buildAgents.html")
 public class BuildAgentController {
 
     private AgentServer _agentServer;
@@ -50,7 +50,7 @@ public class BuildAgentController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String listAgents() {
-        return "user/listBuildAgents";
+        return "user/buildAgents";
     }
 
 }

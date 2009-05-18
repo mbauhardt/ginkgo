@@ -56,20 +56,20 @@ public class DataInjector {
 
     private void injectStep() throws DaoException {
         _persistenceService.beginTransaction();
-        Stage stage = _stageDao.getByName("Vcs Prepare");
+        List<Stage> stages = _stageDao.getByName("Vcs Prepare");
         Step step = new Step();
         step.setName("Update");
         step.setCommand("ls");
-        step.setStage(stage);
+        step.setStage(stages.get(0));
         if (!_stepDao.exists("Update")) {
             _stepDao.makePersistent(step);
         }
 
-        stage = _stageDao.getByName("Compile");
+        stages = _stageDao.getByName("Compile");
         step = new Step();
         step.setName("Clean");
         step.setCommand("pwd");
-        step.setStage(stage);
+        step.setStage(stages.get(0));
         if (!_stepDao.exists("Clean")) {
             _stepDao.makePersistent(step);
         }
@@ -77,7 +77,7 @@ public class DataInjector {
         step = new Step();
         step.setName("Compile");
         step.setCommand("foo");
-        step.setStage(stage);
+        step.setStage(stages.get(0));
         if (!_stepDao.exists("Compile")) {
             _stepDao.makePersistent(step);
         }
@@ -88,16 +88,16 @@ public class DataInjector {
 
     private void injectStage() throws DaoException {
         _persistenceService.beginTransaction();
-        BuildPlan buildPlan = _buildPlanDao.getByName("TEST-CORE");
+        List<BuildPlan> buildPlans = _buildPlanDao.getByName("TEST-CORE");
         Stage stage = new Stage();
         stage.setName("Vcs Prepare");
-        stage.setBuildPlan(buildPlan);
+        stage.setBuildPlan(buildPlans.get(0));
         if (!_stageDao.exists("Vcs Prepare")) {
             _stageDao.makePersistent(stage);
         }
         Stage stage2 = new Stage();
         stage2.setName("Compile");
-        stage2.setBuildPlan(buildPlan);
+        stage2.setBuildPlan(buildPlans.get(0));
         if (!_stageDao.exists("Compile")) {
             _stageDao.makePersistent(stage2);
         }
@@ -108,8 +108,8 @@ public class DataInjector {
         _persistenceService.beginTransaction();
         BuildPlan buildPlan = new BuildPlan();
         buildPlan.setName("TEST-CORE");
-        Project project = _projectDao.getByName("test-project");
-        buildPlan.setProject(project);
+        List<Project> projects = _projectDao.getByName("test-project");
+        buildPlan.setProject(projects.get(0));
         if (!_buildPlanDao.exists("TEST-CORE")) {
             _buildPlanDao.makePersistent(buildPlan);
         }
