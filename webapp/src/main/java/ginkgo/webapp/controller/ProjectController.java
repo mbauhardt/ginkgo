@@ -195,7 +195,7 @@ public class ProjectController {
             }
         }
 
-        return "redirect:listProjects.html";
+        return "redirect:projects.html";
     }
 
     @RequestMapping(value = "/user/deleteProject.html", method = RequestMethod.POST)
@@ -206,7 +206,7 @@ public class ProjectController {
             _configurationTupleDao.makeTransient(configurationTuple);
         }
         _projectDao.makeTransient(byId);
-        return "redirect:listProjects.html";
+        return "redirect:projects.html";
     }
 
 }

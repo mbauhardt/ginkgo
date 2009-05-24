@@ -77,14 +77,14 @@
                                                             <div class="bd">
                                                                 <ul class="first-of-type">
                                                                     <c:forEach items="${vcsList}" var="vcs">
-                                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="${vcs}">${vcs}</a></li>
+                                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="editProject.html?vcs=${vcs}">${vcs}</a></li>
                                                                     </c:forEach>
                                                                 </ul>            
                                                             </div>
                                                         </div>                    
                                                     </li>
                                                     <c:forEach items="${projects}" var="project">
-                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="#">${project.name}</a></li>
+                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="editProject.html?id=${project.id}">${project.name}</a></li>
                                                     </c:forEach>
                                                 </ul>
                                             </div>
@@ -193,4 +193,4 @@
         </div>
         
     </body>
-</html><!-- presentbright.corp.yahoo.com uncompressed/chunked Thu Feb 19 10:53:17 PST 2009 -->
+</html>

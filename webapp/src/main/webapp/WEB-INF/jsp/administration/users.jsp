@@ -63,7 +63,7 @@
                             <div class="bd">
                                 <ul class="first-of-type">
                                     <li class="yuimenubaritem first-of-type">
-                                        <a class="yuimenubaritemlabel" href="addUser.html">Create User</a>
+                                        <a class="yuimenubaritemlabel" href="editUser.html">Create User</a>
                                     </li>
                                 </ul>            
                             </div>
