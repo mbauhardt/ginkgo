@@ -24,29 +24,10 @@
         <script type="text/javascript" src="../css/yui/build/dragdrop/dragdrop-min.js"></script>
         <script type="text/javascript" src="../css/yui/build/container/container-min.js"></script>
 
-
-
-        <script type="text/javascript">
-            YAHOO.util.Event.onContentReady("leftNav", function () {
-                var oMenu = new YAHOO.widget.Menu("leftNav", { 
-                                                        position: "static", 
-                                                        hidedelay:  750, 
-                                                        lazyload: true });
-                oMenu.render();            
-            });
-        </script>
         <style type="text/css">
             #leftNav {
                 position: static;
             }
-
-
-            /*
-                For IE 6: trigger "haslayout" for the anchor elements in the root Menu by 
-                setting the "zoom" property to 1.  This ensures that the selected state of 
-                MenuItems doesn't get dropped when the user mouses off of the text node of 
-                the anchor element that represents a MenuItem's text label.
-            */
 
             #leftNav .yuimenuitemlabel {
                 _zoom: 1;
@@ -57,6 +38,17 @@
             }
 
         </style>
+
+        <script type="text/javascript">
+        YAHOO.util.Event.onContentReady("topNav", function () {
+        
+            var oMenuBar = new YAHOO.widget.MenuBar("topNav", { 
+                                                        autosubmenudisplay: true, 
+                                                        hidedelay: 750, 
+                                                        lazyload: true });
+            oMenuBar.render();
+        });
+        </script>
 
     </head>
     <body class="yui-skin-sam" id="yahoo-com">
@@ -72,12 +64,53 @@
                 <!-- start: primary column from outer template -->
                 <div id="yui-main">
                     <div class="yui-b">
-                        <%@ include file="/WEB-INF/jsp/topNavigation.jsp" %>                    
+                        <div id="topNav" class="yuimenubar yuimenubarnav">
+                            <div class="bd">
+                                <ul class="first-of-type">
+                                    <li class="yuimenubaritem first-of-type">
+                                        <a class="yuimenubaritemlabel" href="#projects">Edit Project</a>
+                                        <div id="project" class="yuimenu">
+                                            <div class="bd">
+                                                <ul>
+                                                    <li class="yuimenuitem"><a class="yuimenuitemlabel" href="#">New</a>
+                                                        <div id="new" class="yuimenu">
+                                                            <div class="bd">
+                                                                <ul class="first-of-type">
+                                                                    <c:forEach items="${vcsList}" var="vcs">
+                                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="${vcs}">${vcs}</a></li>
+                                                                    </c:forEach>
+                                                                </ul>            
+                                                            </div>
+                                                        </div>                    
+                                                    </li>
+                                                    <c:forEach items="${projects}" var="project">
+                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="#">${project.name}</a></li>
+                                                    </c:forEach>
+                                                </ul>
+                                            </div>
+                                        </div>      
+                                    </li>
+                                    <li class="yuimenubaritem">
+                                        <a class="yuimenubaritemlabel" href="#buildplans">Add Build Plan</a>
+                                        <div id="buildplans" class="yuimenu">
+                                            <div class="bd">
+                                                <c:forEach items="${projects}" var="project">
+                                                    <ul>
+                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="#" id="showAddBuildPlan_${project.id}">${project.name}</a></li>
+                                                    </ul>
+                                                </c:forEach>
+                                            </div>
+                                        </div>      
+                                    </li>
+                        
+                                </ul>            
+                            </div>
+                         </div>
                         <c:forEach items="${projects}" var="project">
                             <div id="addBuildPlan_${project.id}">
                             <form:form method="post" action="addBuildPlan.html" modelAttribute="buildPlanCommand" >
                                 <fieldset>
-                                    <legend>Build Plan</legend>
+                                    <legend>Create Build Plan for Project: ${project.name}</legend>
                                     <form:label path="name" >Name</form:label>
                                     <form:input path="name" />
                                 </fieldset>
@@ -121,13 +154,15 @@
                         
                             <span>
                                 <b>${project.name}</b>
-                                <span><a href="#" id="showAddBuildPlan_${project.id}">Add Build Plan</a></span>
                             </span>
                             <hr/>
                                 <div class="yui-gd">
                                     <div class="yui-u first">
                                         <c:forEach items="${project.buildPlans}" var="buildPlan">
-                                            <p>${buildPlan.name} <a href="buildPlan.html?id=${buildPlan.id}">Edit</a></p>
+                                            <p>${buildPlan.name} 
+                                                <a href="buildPlan.html?id=${buildPlan.id}">Edit</a>
+                                                <a href="buildNumbers.html?buildPlanId=${buildPlan.id}">BN</a>
+                                             </p>
                                         </c:forEach>
                                     </div>
                                     <div class="yui-u">
@@ -146,51 +181,7 @@
 
                 <!-- start: secondary column from outer template -->
                 <div class="yui-b">
-
-                    <div id="leftNav" class="yuimenu">
-                        <div class="bd">
-                            <h6 class="first-of-type">Guest</h6>
-                            <ul class="first-of-type">
-                                <li class="yuimenuitem">
-                                    <a class="yuimenuitemlabel" href="welcome.html">
-                                        Welcome
-                                    </a>
-                                </li>
-                            </ul>            
-                            <h6>User</h6>
-                            <ul>
-                                <li class="yuimenuitem">
-                                    <a class="yuimenuitemlabel" href="../user/welcome.html">
-                                        Welcome
-                                    </a>
-                                </li>
-                                <li class="yuimenuitem">
-                                    <a class="yuimenuitemlabel" href="../user/projects.html">
-                                        Project's
-                                    </a>
-                                </li>
-                                <li class="yuimenuitem">
-                                    <a class="yuimenuitemlabel" href="../user/listBuildAgents.html">
-                                        Build Agent's
-                                    </a>
-                                </li>
-                            </ul>            
-                            <h6>Administration</h6>
-                            <ul>
-                                <li class="yuimenuitem">
-                                    <a class="yuimenuitemlabel" href="../administration/welcome.html">
-                                        Welcome
-                                    </a>
-                                </li>
-                                <li class="yuimenuitem">
-                                    <a class="yuimenuitemlabel" href="../administration/listUsers.html">
-                                        User's
-                                    </a>
-                                </li>
-                            </ul>            
-
-                        </div>
-                    </div>                    
+                    <%@ include file="/WEB-INF/jsp/leftNav.jsp" %>
                 </div>
                 <!-- end: secondary column from outer template -->
             </div>

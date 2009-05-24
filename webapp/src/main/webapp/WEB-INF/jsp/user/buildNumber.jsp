@@ -1,100 +1,133 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-<title>Build Number</title>
-<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-<!-- (en) Add your meta data here -->
-<!-- (de) Fügen Sie hier Ihre Meta-Daten ein -->
-
-<link href="../css/my_layout.css" rel="stylesheet" type="text/css"/>
-<!--[if lte IE 7]>
-<link href="patches/patch_layout_draft.css" rel="stylesheet" type="text/css" />
-<![endif]-->
-</head>
-<body>
-<div class="page_margins">
-  <div class="page">
-    <div id="header">
-      <div id="topnav">
-        <!-- start: skip link navigation -->
-        <a class="skip" href="#navigation" title="skip link">Skip to navigation</a><span class="hideme">.</span>
-        <a class="skip" href="#content" title="skip link">Skip to content</a><span class="hideme">.</span>
-        <!-- end: skip link navigation -->
-        <span> 
-        <%@ include file="/WEB-INF/jsp/topNav.jsp" %>
-        </span> </div>
-      <h1> </h1>
-    </div>
-    <!-- begin: main navigation #nav -->
-    <div id="nav">
-      <!-- skip anchor: navigation -->
-      <a id="navigation" name="navigation"></a>
-      <%@ include file="/WEB-INF/jsp/mainNav.jsp" %>   
-    </div>
-    <!-- end: main navigation -->
-    <!-- begin: content area #main -->
-    <div id="main">
-      <!-- begin: #col1 - first float column -->
-      <div id="col1">
-        <div id="col1_content" class="clearfix"> </div>
-        <%@ include file="/WEB-INF/jsp/user/subNav.jsp" %>
-      </div>
-      <!-- end: #col1 -->
-      <!-- begin: #col2 second float column -->
-      <div id="col2">
-        <div id="col2_content" class="clearfix"> </div>
-        <%@ include file="/WEB-INF/jsp/help.jsp" %>
-      </div>
-      <!-- end: #col2 -->
-      <!-- begin: #col3 static column -->
-      <div id="col3">
-        <div id="col3_content" class="clearfix">
-          <!-- skip anchor: content -->
-          <a id="content" name="content"></a>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>Welcome</title>
         
-          <table border="0" cellpadding="0" cellspacing="0" class="full">
-                    <caption>
-                      Build Commands
-                    </caption>
-          <thead>
-            <tr><th scope="col" colspan="3">${buildNumber.buildNumber}</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="col">Command</th>
-              <th scope="col">Build Agent</th>
-              <th scope="col">Status</th>
-            </tr>
-            <c:forEach items="${buildCommands}" var="buildCommand">
-            <tr>
-                <td>${buildCommand.command} (${buildCommand.id})</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>    
-                <c:forEach items="${buildCommand.buildAgentStatus}" var="status">
-                    <td scope="row" class="sub">&nbsp;</td>
-                    <td scope="row" class="sub">${status.key}</td>
-                    <td scope="row" class="sub">${status.value}</td>
-                </c:forEach>
-            </tr>
-            </c:forEach>
-          </tbody>
-        </table>
-              
+        <!-- Standard reset, fonts and grids -->
+
+        <link rel="stylesheet" type="text/css" href="../css/yui/build/reset-fonts-grids/reset-fonts-grids.css" />
+        <link rel="stylesheet" type="text/css" href="../css/yui/build/menu/assets/skins/sam/menu.css" /> 
+        <script type="text/javascript" src="../css/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+        <script type="text/javascript" src="../css/yui/build/container/container_core.js"></script>
+        <script type="text/javascript" src="../css/yui/build/menu/menu.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="../css/yui/build/datatable/assets/skins/sam/datatable.css" />
+        <script type="text/javascript" src="../css/yui/build/element/element-min.js"></script>
+        <script type="text/javascript" src="../css/yui/build/datasource/datasource-min.js"></script>
+        <script type="text/javascript" src="../css/yui/build/datatable/datatable-min.js"></script>
+
+        <style type="text/css">
+            #leftNav {
+                position: static;
+            }
+
+            #leftNav .yuimenuitemlabel {
+                _zoom: 1;
+            }
+
+            #leftNav .yuimenu .yuimenuitemlabel {
+                _zoom: normal;
+            }
+
+        </style>
+
+        <script type="text/javascript">
+        YAHOO.util.Event.onContentReady("topNav", function () {
+        
+            var oMenuBar = new YAHOO.widget.MenuBar("topNav", { 
+                                                        autosubmenudisplay: true, 
+                                                        hidedelay: 750, 
+                                                        lazyload: true });
+            oMenuBar.render();
+        });
+        </script>
+
+    </head>
+    <body class="yui-skin-sam" id="yahoo-com">
+
+        <div id="doc" class="yui-t1">
+            <div id="hd">
+                <!-- start: your content here -->
+                    <h1>Welcome</h1>
+                <!-- end: your content here -->
+            </div>
+            <div id="bd">
+
+                <!-- start: primary column from outer template -->
+                <div id="yui-main">
+                    <div class="yui-b">
+                        <div id="markup">
+                            <table id="buildNumber">
+                                <thead>
+                                    <tr>
+                                        <th>Command</th>
+                                        <th>Build Agent</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach items="${buildCommands}" var="buildCommand">
+                                        <tr>
+                                            <td>${buildCommand.command}</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        <tr>    
+                                            <c:forEach items="${buildCommand.buildAgentStatus}" var="status">
+                                                <td>&nbsp;</td>
+                                                <td>${status.key}</td>
+                                                <td>${status.value}</td>
+                                            </c:forEach>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <script type="text/javascript">
+                            YAHOO.util.Event.addListener(window, "load", function() {
+                                YAHOO.example.EnhanceFromMarkup = new function() {
+                                    var myColumnDefs = [
+                                        {key:"buildCommand",label:"Build Command"},
+                                        {key:"buildAgent",label:"Build Agent"},
+                                        {key:"buildStatus",label:"Build Status"},
+                                    ];
+                            
+                                    this.myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("buildNumber"));
+                                    this.myDataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
+                                    this.myDataSource.responseSchema = {
+                                        fields: [{key:"buildCommand"},
+                                                {key:"buildAgent"},
+                                                {key:"buildStatus"},
+                                        ]
+                                    };
+                            
+                                    this.myDataTable = new YAHOO.widget.DataTable("markup", myColumnDefs, this.myDataSource,
+                                            {caption:"Build Number: ${buildNumber.buildNumber}"}
+                                    );
+                                };
+                            });
+                        </script>                                            
+                    
+                    </div>
+                </div>
+                <!-- end: primary column from outer template -->
+
+                <!-- start: secondary column from outer template -->
+                <div class="yui-b">
+                    <%@ include file="/WEB-INF/jsp/leftNav.jsp" %>                
+                 </div>
+                <!-- end: secondary column from outer template -->
+            </div>
+            <div id="ft">
+
+                <p>FOOTER</p>
+
+            </div>
         </div>
-        <!-- IE column clearing -->
-        <div id="ie_clearing">&nbsp;</div>
-      </div>
-      <!-- end: #col3 -->
-    </div>
-    <!-- end: #main -->
-    <!-- begin: #footer -->
-    <div id="footer">Layout based on <a href="http://www.yaml.de/">YAML</a></div>
-    <!-- end: #footer -->
-  </div>
-</div>
-</body>
+        
+    </body>
 </html>

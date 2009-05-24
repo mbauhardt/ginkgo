@@ -48,9 +48,9 @@ public class UserController {
         return Role.values();
     }
 
-    @RequestMapping(value = { "/administration/listUsers.html" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/administration/users.html" }, method = RequestMethod.GET)
     public String listUsers() throws DaoException {
-        return "administration/listUsers";
+        return "administration/users";
     }
 
     @RequestMapping(value = { "/administration/editUser.html" }, method = RequestMethod.GET)
@@ -71,7 +71,7 @@ public class UserController {
         user.setName(userCommand.getName());
         user.setRole(userCommand.getRole());
         user.setPassword(userCommand.getPassword());
-        return "redirect:listUsers.html";
+        return "redirect:users.html";
     }
 
 }

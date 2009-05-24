@@ -14,27 +14,10 @@
         <script type="text/javascript" src="../css/yui/build/container/container_core.js"></script>
         <script type="text/javascript" src="../css/yui/build/menu/menu.js"></script>
 
-        <script type="text/javascript">
-            YAHOO.util.Event.onContentReady("leftNav", function () {
-                var oMenu = new YAHOO.widget.Menu("leftNav", { 
-                                                        position: "static", 
-                                                        hidedelay:  750, 
-                                                        lazyload: true });
-                oMenu.render();            
-            });
-        </script>
         <style type="text/css">
             #leftNav {
                 position: static;
             }
-
-
-            /*
-                For IE 6: trigger "haslayout" for the anchor elements in the root Menu by 
-                setting the "zoom" property to 1.  This ensures that the selected state of 
-                MenuItems doesn't get dropped when the user mouses off of the text node of 
-                the anchor element that represents a MenuItem's text label.
-            */
 
             #leftNav .yuimenuitemlabel {
                 _zoom: 1;
@@ -66,57 +49,13 @@
 
                 <!-- start: secondary column from outer template -->
                 <div class="yui-b">
-
-                    <div id="leftNav" class="yuimenu">
-                        <div class="bd">
-                            <h6 class="first-of-type">Guest</h6>
-                            <ul class="first-of-type">
-                                <li class="yuimenuitem">
-                                    <a class="yuimenuitemlabel" href="../guest/welcome.html">
-                                        Welcome
-                                    </a>
-                                </li>
-                            </ul>            
-                            <h6>User</h6>
-                            <ul>
-                                <li class="yuimenuitem">
-                                    <a class="yuimenuitemlabel" href="../user/welcome.html">
-                                        Welcome
-                                    </a>
-                                </li>
-                                <li class="yuimenuitem">
-                                    <a class="yuimenuitemlabel" href="../user/projects.html">
-                                        Project's
-                                    </a>
-                                </li>
-                                <li class="yuimenuitem">
-                                    <a class="yuimenuitemlabel" href="../user/listBuildAgents.html">
-                                        Build Agent's
-                                    </a>
-                                </li>
-                            </ul>            
-                            <h6>Administration</h6>
-                            <ul>
-                                <li class="yuimenuitem">
-                                    <a class="yuimenuitemlabel" href="../administration/welcome.html">
-                                        Welcome
-                                    </a>
-                                </li>
-                                <li class="yuimenuitem">
-                                    <a class="yuimenuitemlabel" href="../administration/listUsers.html">
-                                        User's
-                                    </a>
-                                </li>
-                            </ul>            
-
-                        </div>
-                    </div>                    
+                    <%@ include file="/WEB-INF/jsp/leftNav.jsp" %>
                 </div>
                 <!-- end: secondary column from outer template -->
             </div>
             <div id="ft">
 
-                <p>FOOTER: Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas sit amet metus. Nunc quam elit, posuere nec, auctor in, rhoncus quis, dui. Aliquam erat volutpat. Ut dignissim, massa sit amet dignissim cursus, quam lacus feugiat.</p>
+                <p>FOOTER</p>
 
             </div>
         </div>

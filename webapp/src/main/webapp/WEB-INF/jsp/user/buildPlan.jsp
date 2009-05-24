@@ -125,13 +125,6 @@ YAHOO.util.Event.onDOMReady(initRunBuildPlan);
                         </a>
                     </span>
                     <span style="font-size:10px">
-                        <a href="listBuildNumbers.html?buildPlanId=${buildPlanCommand.id}">
-                            <span>
-                                Latest Build |
-                            </span>
-                        </a>
-                    </span>
-                    <span style="font-size:10px">
                         <a href="#" id="showRunBuildPlan">
                             <span>
                                 Run Build Plan

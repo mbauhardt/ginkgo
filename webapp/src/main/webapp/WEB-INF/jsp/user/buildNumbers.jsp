@@ -34,6 +34,17 @@
 
         </style>
 
+        <script type="text/javascript">
+        YAHOO.util.Event.onContentReady("topNav", function () {
+        
+            var oMenuBar = new YAHOO.widget.MenuBar("topNav", { 
+                                                        autosubmenudisplay: true, 
+                                                        hidedelay: 750, 
+                                                        lazyload: true });
+            oMenuBar.render();
+        });
+        </script>
+
     </head>
     <body class="yui-skin-sam" id="yahoo-com">
 
@@ -49,18 +60,18 @@
                 <div id="yui-main">
                     <div class="yui-b">
                         <div id="markup">
-                            <table id="agents">
+                            <table id="buildNumbers">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
+                                        <th>Build Number</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach items="${agents}" var="agent">
+                                    <c:forEach items="${buildNumbers}" var="buildNumber">
                                         <tr>
-                                            <td>${agent.key}</td>
-                                            <td>${agents[agent.key].message} (${agents[agent.key].timeStamp})</td>
+                                            <td><a href="buildNumber.html?buildNumberId=${buildNumber.id}">${buildNumber.buildNumber}</a></td>
+                                            <td>${buildNumber.buildStatus}</td>
                                         </tr>
                                     </c:forEach>
                                 </tbody>
@@ -71,32 +82,33 @@
                             YAHOO.util.Event.addListener(window, "load", function() {
                                 YAHOO.example.EnhanceFromMarkup = new function() {
                                     var myColumnDefs = [
-                                        {key:"name",label:"Agent Name"},
-                                        {key:"status",label:"Status Message"},
+                                        {key:"buildNumber",label:"Build Number"},
+                                        {key:"buildStatus",label:"Build Status"},
                                     ];
                             
-                                    this.myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("agents"));
+                                    this.myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("buildNumbers"));
                                     this.myDataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
                                     this.myDataSource.responseSchema = {
-                                        fields: [{key:"name"},
-                                                {key:"status"},
+                                        fields: [{key:"buildNumber"},
+                                                {key:"buildStatus"},
                                         ]
                                     };
                             
                                     this.myDataTable = new YAHOO.widget.DataTable("markup", myColumnDefs, this.myDataSource,
-                                            {caption:"Connected Build Agents"}
+                                            {caption:"${buildPlan.name}"}
                                     );
                                 };
                             });
                         </script>                                            
+                    
                     </div>
                 </div>
                 <!-- end: primary column from outer template -->
 
                 <!-- start: secondary column from outer template -->
                 <div class="yui-b">
-                    <%@ include file="/WEB-INF/jsp/leftNav.jsp" %>
-                </div>
+                    <%@ include file="/WEB-INF/jsp/leftNav.jsp" %>                
+                 </div>
                 <!-- end: secondary column from outer template -->
             </div>
             <div id="ft">

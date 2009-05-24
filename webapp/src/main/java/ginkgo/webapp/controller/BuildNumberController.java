@@ -35,7 +35,7 @@ public class BuildNumberController {
         _buildNumberDao = buildNumberDao;
     }
 
-    @RequestMapping(value = "/user/listBuildNumbers.html", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/buildNumbers.html", method = RequestMethod.GET)
     public String buildNumbers(Model model, @RequestParam(value = "buildPlanId", required = true) Long id)
             throws DaoException {
         BuildPlan buildPlan = _buildPlanDao.getById(id);
@@ -48,7 +48,8 @@ public class BuildNumberController {
             calculateBuildStatus(buildNumber, list);
         }
         model.addAttribute("buildNumbers", buildNumbers);
-        return "user/listBuildNumbers";
+        model.addAttribute("buildPlan", buildPlan);
+        return "user/buildNumbers";
     }
 
     @RequestMapping(value = "/user/buildNumber.html", method = RequestMethod.GET)

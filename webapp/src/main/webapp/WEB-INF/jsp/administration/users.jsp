@@ -34,6 +34,17 @@
 
         </style>
 
+        <script type="text/javascript">
+        YAHOO.util.Event.onContentReady("topNav", function () {
+        
+            var oMenuBar = new YAHOO.widget.MenuBar("topNav", { 
+                                                        autosubmenudisplay: true, 
+                                                        hidedelay: 750, 
+                                                        lazyload: true });
+            oMenuBar.render();
+        });
+        </script>
+
     </head>
     <body class="yui-skin-sam" id="yahoo-com">
 
@@ -48,19 +59,31 @@
                 <!-- start: primary column from outer template -->
                 <div id="yui-main">
                     <div class="yui-b">
+                        <div id="topNav" class="yuimenubar yuimenubarnav">
+                            <div class="bd">
+                                <ul class="first-of-type">
+                                    <li class="yuimenubaritem first-of-type">
+                                        <a class="yuimenubaritemlabel" href="addUser.html">Create User</a>
+                                    </li>
+                                </ul>            
+                            </div>
+                         </div>
+                    
                         <div id="markup">
-                            <table id="agents">
+                            <table id="users">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
-                                        <th>Status</th>
+                                        <th>Role</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach items="${agents}" var="agent">
+                                    <c:forEach items="${users}" var="user">
                                         <tr>
-                                            <td>${agent.key}</td>
-                                            <td>${agents[agent.key].message} (${agents[agent.key].timeStamp})</td>
+                                            <td>${user.name}</td>
+                                            <td>${user.role}</td>
+                                            <td><a href="editUser.html?id=${user.id}">Edit</a></td>
                                         </tr>
                                     </c:forEach>
                                 </tbody>
@@ -71,32 +94,35 @@
                             YAHOO.util.Event.addListener(window, "load", function() {
                                 YAHOO.example.EnhanceFromMarkup = new function() {
                                     var myColumnDefs = [
-                                        {key:"name",label:"Agent Name"},
-                                        {key:"status",label:"Status Message"},
+                                        {key:"name",label:"User Name"},
+                                        {key:"role",label:"User Role"},
+                                        {key:"action",label:"Action"},
                                     ];
                             
-                                    this.myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("agents"));
+                                    this.myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("users"));
                                     this.myDataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
                                     this.myDataSource.responseSchema = {
                                         fields: [{key:"name"},
-                                                {key:"status"},
+                                                {key:"role"},
+                                                {key:"action"},
                                         ]
                                     };
                             
                                     this.myDataTable = new YAHOO.widget.DataTable("markup", myColumnDefs, this.myDataSource,
-                                            {caption:"Connected Build Agents"}
+                                            {caption:"Saved Users"}
                                     );
                                 };
                             });
                         </script>                                            
+                    
                     </div>
                 </div>
                 <!-- end: primary column from outer template -->
 
                 <!-- start: secondary column from outer template -->
                 <div class="yui-b">
-                    <%@ include file="/WEB-INF/jsp/leftNav.jsp" %>
-                </div>
+                    <%@ include file="/WEB-INF/jsp/leftNav.jsp" %>                
+                 </div>
                 <!-- end: secondary column from outer template -->
             </div>
             <div id="ft">
