@@ -21,7 +21,7 @@ public class BuildPlan extends BaseName {
     private Set<Stage> _stages = new TreeSet<Stage>();
 
     @ManyToOne
-    @JoinColumn(name = "project_fk")
+    @JoinColumn(name = "project_fk", nullable = false)
     private Project _project;
 
     @OneToMany(fetch = FetchType.LAZY)

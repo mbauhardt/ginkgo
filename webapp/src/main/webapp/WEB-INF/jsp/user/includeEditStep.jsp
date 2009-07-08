@@ -1,6 +1,6 @@
 <script>
 YAHOO.namespace("example.container");
-function initEditStep() {
+function initEditStep_${stageCommandCounter}_${stepCommandCounter}() {
     var handleSubmit = function() {
         this.submit();
     };
@@ -32,11 +32,11 @@ function initEditStep() {
     YAHOO.util.Event.addListener("showEditStep_${stageCommandCounter}_${stepCommandCounter}", "click", YAHOO.example.container.editStep_${stageCommandCounter}_${stepCommandCounter}.show, YAHOO.example.container.editStep_${stageCommandCounter}_${stepCommandCounter}, true);
 }
 
-YAHOO.util.Event.onDOMReady(initEditStep);
+YAHOO.util.Event.onDOMReady(initEditStep_${stageCommandCounter}_${stepCommandCounter});
 </script>
 
 <c:if test="${stepCommandCounter < maxSteps}">
-<dl class="info">
+<dl style="border:dotted">
     <dt>Step
         - ${stepCommand.name} &nbsp;&nbsp;&nbsp;
         <span style="font-size:10px">
@@ -60,15 +60,15 @@ YAHOO.util.Event.onDOMReady(initEditStep);
 
 
 <div id="editStep_${stageCommandCounter}_${stepCommandCounter}">
-<form:form method="post" action="editStep.html" modelAttribute="buildPlanCommand" cssClass="yform">
+<form:form method="post" action="editStep.html" modelAttribute="buildPlanCommand">
     <fieldset>
         <legend>Step</legend>
-        <div class="type-text">
-            <label for="name">Name</label>
+        <div>
+            <form:label path="stageCommands[${stageCommandCounter}].stepCommands[${stepCommandCounter}].name">Name</form:label>
             <form:input path="stageCommands[${stageCommandCounter}].stepCommands[${stepCommandCounter}].name" />
         </div>
         <div class="type-text">
-            <label for="name">Command</label>
+            <form:label path="stageCommands[${stageCommandCounter}].stepCommands[${stepCommandCounter}].command">Command</form:label>
             <form:input path="stageCommands[${stageCommandCounter}].stepCommands[${stepCommandCounter}].command" />
         </div>
     </fieldset>
@@ -84,7 +84,7 @@ YAHOO.util.Event.onDOMReady(initEditStep);
 <script>
 YAHOO.namespace("example.container");
 
-function initDeleteStep() {
+function initDeleteStep_${stageCommandCounter}_${stepCommandCounter}() {
 var handleYes = function() {
     this.form.submit();
 };
@@ -110,11 +110,11 @@ YAHOO.example.container.deleteStep_${stageCommandCounter}_${stepCommandCounter}.
 YAHOO.util.Event.addListener("showDeleteStep_${stageCommandCounter}_${stepCommandCounter}", "click", YAHOO.example.container.deleteStep_${stageCommandCounter}_${stepCommandCounter}.show, YAHOO.example.container.deleteStep_${stageCommandCounter}_${stepCommandCounter}, true);
              
 }
-YAHOO.util.Event.onDOMReady(initDeleteStep);             
+YAHOO.util.Event.onDOMReady(initDeleteStep_${stageCommandCounter}_${stepCommandCounter});             
 </script>
 
 <div id="deleteStep_${stageCommandCounter}_${stepCommandCounter}">
-<form:form method="post" action="deleteStep.html" modelAttribute="buildPlanCommand" cssClass="yform">
+<form:form method="post" action="deleteStep.html" modelAttribute="buildPlanCommand">
     <form:hidden path="stageCommands[${stageCommandCounter}].stepCommands[${stepCommandCounter}].id" />
     <form:hidden path="id" />
     <input type="hidden" name="stageIndex" value="${stageCommandCounter}" />

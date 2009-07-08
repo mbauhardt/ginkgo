@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class StepDao extends BaseNameDao<Step> implements IStepDao {
+public class StepDao extends BaseDao<Step> implements IStepDao {
 
     @Autowired
     public StepDao(PersistenceService persistenceService) {

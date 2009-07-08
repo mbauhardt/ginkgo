@@ -10,6 +10,8 @@ public interface IDao<T> {
 
     void makeTransient(T t);
 
+    void flush();
+
     List<T> getAll() throws DaoException;
 
     List<T> getAll(Order order, int maxResults) throws DaoException;

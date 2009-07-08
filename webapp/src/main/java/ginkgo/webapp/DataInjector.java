@@ -58,27 +58,29 @@ public class DataInjector {
         _persistenceService.beginTransaction();
         List<Stage> stages = _stageDao.getByName("Vcs Prepare");
         Step step = new Step();
-        step.setName("Update");
         step.setCommand("ls");
-        step.setStage(stages.get(0));
-        if (!_stepDao.exists("Update")) {
+        Stage stage = stages.get(0);
+        if (stage.getSteps().size() == 0) {
+            stage.addStep(step);
+            step.setStage(stage);
             _stepDao.makePersistent(step);
         }
 
         stages = _stageDao.getByName("Compile");
         step = new Step();
-        step.setName("Clean");
         step.setCommand("pwd");
-        step.setStage(stages.get(0));
-        if (!_stepDao.exists("Clean")) {
+        stage = stages.get(0);
+        if (stage.getSteps().size() == 0) {
+            stage.addStep(step);
+            step.setStage(stage);
             _stepDao.makePersistent(step);
         }
 
         step = new Step();
-        step.setName("Compile");
         step.setCommand("foo");
-        step.setStage(stages.get(0));
-        if (!_stepDao.exists("Compile")) {
+        if (stage.getSteps().size() == 0) {
+            stage.addStep(step);
+            step.setStage(stage);
             _stepDao.makePersistent(step);
         }
 

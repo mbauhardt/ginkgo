@@ -5,12 +5,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Step extends BaseName {
+public class Step extends Base {
 
     private String _command;
 
     @ManyToOne
-    @JoinColumn(name = "stage_fk")
+    @JoinColumn(name = "stage_fk", nullable = false)
     private Stage _stage;
 
     public String getCommand() {

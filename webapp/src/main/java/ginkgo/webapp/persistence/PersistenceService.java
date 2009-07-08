@@ -77,6 +77,11 @@ public class PersistenceService {
         entityManager.remove(object);
     }
 
+    public void flush() {
+        EntityManager entityManager = getEntityManager();
+        entityManager.flush();
+    }
+
     public Object getById(Class<?> clazz, Serializable id) {
         EntityManager entityManager = getEntityManager();
         return entityManager.find(clazz, id);

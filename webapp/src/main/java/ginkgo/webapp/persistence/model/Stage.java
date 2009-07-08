@@ -19,7 +19,7 @@ public class Stage extends BaseName {
     private List<Step> _steps = new ArrayList<Step>();
 
     @ManyToOne
-    @JoinColumn(name = "buildPlan_fk")
+    @JoinColumn(name = "buildPlan_fk", nullable = false)
     private BuildPlan _buildPlan;
 
     public Stage() {

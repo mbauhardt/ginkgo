@@ -1,6 +1,6 @@
 <script>
 YAHOO.namespace("example.container");
-function init() {
+function init${stageCommandCounter}() {
     var handleSubmit = function() {
         this.submit();
     };
@@ -32,13 +32,13 @@ function init() {
     YAHOO.util.Event.addListener("showEditStage${stageCommandCounter}", "click", YAHOO.example.container.editStage${stageCommandCounter}.show, YAHOO.example.container.editStage${stageCommandCounter}, true);
 }
 
-YAHOO.util.Event.onDOMReady(init);
+YAHOO.util.Event.onDOMReady(init${stageCommandCounter});
 </script>
 
 <c:if test="${stageCommandCounter < maxStages}">
 <c:set var="maxSteps" value="${fn:length(buildPlanCommand.stageCommands[stageCommandCounter].stepCommands)}" />
 <c:set var="maxSteps" value="${maxSteps-1}" />
-<dl class="important">
+<dl style="border:dotted">
     <dt>Stage - ${stageCommand.name} &nbsp;&nbsp;&nbsp;
         <span style="font-size:10px">
             <a href="#" id="showEditStage${stageCommandCounter}">
@@ -73,11 +73,11 @@ YAHOO.util.Event.onDOMReady(init);
 
 
 <div id="editStage${stageCommandCounter}">
-<form:form method="post" action="editStage.html" modelAttribute="buildPlanCommand" cssClass="yform">
+<form:form method="post" action="editStage.html" modelAttribute="buildPlanCommand">
     <fieldset>
         <legend>Stage</legend>
-        <div class="type-text">
-            <label for="name">Name</label>
+        <div>
+            <form:label path="stageCommands[${stageCommandCounter}].name">Name</form:label>
             <form:input path="stageCommands[${stageCommandCounter}].name" />
         </div>
     </fieldset>
@@ -92,7 +92,7 @@ YAHOO.util.Event.onDOMReady(init);
 <script>
 YAHOO.namespace("example.container");
 
-function initDelete() {
+function initDelete${stageCommandCounter}() {
 var handleYes = function() {
     this.form.submit();
 };
@@ -118,11 +118,11 @@ YAHOO.example.container.deleteStage${stageCommandCounter}.render();
 YAHOO.util.Event.addListener("showDeleteStage${stageCommandCounter}", "click", YAHOO.example.container.deleteStage${stageCommandCounter}.show, YAHOO.example.container.deleteStage${stageCommandCounter}, true);
              
 }
-YAHOO.util.Event.onDOMReady(initDelete);             
+YAHOO.util.Event.onDOMReady(initDelete${stageCommandCounter});             
 </script>
 
 <div id="deleteStage${stageCommandCounter}">
-<form:form method="post" action="deleteStage.html" modelAttribute="buildPlanCommand" cssClass="yform">
+<form:form method="post" action="deleteStage.html" modelAttribute="buildPlanCommand">
     <form:hidden path="stageCommands[${stageCommandCounter}].id" />
     <form:hidden path="id" />
     <input type="hidden" name="stageIndex" value="${stageCommandCounter}" />

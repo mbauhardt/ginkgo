@@ -89,12 +89,10 @@ public class ProjectController {
         stage.setName("Vcs Prepare");
         
         Step checkoutStep = new Step();
-        checkoutStep.setName("checkout project from vcs");
         checkoutStep.setCommand(checkoutCommand);
         stage.addStep(checkoutStep);
         
         Step updateStep = new Step();
-        updateStep.setName("update project");
         updateStep.setCommand(updateCommand);
         stage.addStep(updateStep);
         

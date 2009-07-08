@@ -28,6 +28,10 @@ public abstract class Dao<T extends Base> implements IDao<T> {
         _persistenceService.remove(t);
     }
 
+    public void flush() {
+        _persistenceService.flush();
+    }
+
     @SuppressWarnings("unchecked")
     public List<T> getAll() throws DaoException {
         Query query = _persistenceService.createQuery("select t from " + _clazz.getName() + " as t");

@@ -1,162 +1,198 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-<title>Your Page Title</title>
-<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-<!-- (en) Add your meta data here -->
-<!-- (de) Fügen Sie hier Ihre Meta-Daten ein -->
-
-<link href="../css/my_layout.css" rel="stylesheet" type="text/css"/>
-
-<!-- Combo-handled YUI CSS files: -->
-<link rel="stylesheet" type="text/css" href="../css/yui/build/button/assets/skins/sam/button.css"></link>
-<link rel="stylesheet" type="text/css" href="../css/yui/build/container/assets/skins/sam/container.css"></link>
-<!-- Combo-handled YUI JS files: -->
-<script type="text/javascript" src="../css/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="../css/yui/build/element/element-min.js"></script>
-<script type="text/javascript" src="../css/yui/build/button/button-min.js"></script>
-<script type="text/javascript" src="../css/yui/build/connection/connection-min.js"></script>
-<script type="text/javascript" src="../css/yui/build/dragdrop/dragdrop-min.js"></script>
-<script type="text/javascript" src="../css/yui/build/container/container-min.js"></script>
-
-<script>
-YAHOO.namespace("example.container");
-
-function initRunBuildPlan() {
-var handleYes = function() {
-    this.form.submit();
-};
-
-var handleNo = function() {
-    this.hide();
-};
-
-YAHOO.example.container.runBuildPlan = 
-    new YAHOO.widget.SimpleDialog("runBuildPlan", 
-             { width: "300px",
-               fixedcenter: true,
-               visible: false,
-               draggable: false,
-               close: true,
-               text: "Do you want to continue?",
-               icon: YAHOO.widget.SimpleDialog.ICON_HELP,
-               constraintoviewport: true,
-               buttons: [ { text:"Yes", handler:handleYes, isDefault:true },
-                          { text:"No",  handler:handleNo } ]
-             } );
-YAHOO.example.container.runBuildPlan.render();
-YAHOO.util.Event.addListener("showRunBuildPlan", "click", YAHOO.example.container.runBuildPlan.show, YAHOO.example.container.runBuildPlan, true);
-             
-}
-YAHOO.util.Event.onDOMReady(initRunBuildPlan);             
-</script>
-
-
-<!--[if lte IE 7]>
-<link href="patches/patch_layout_draft.css" rel="stylesheet" type="text/css" />
-<![endif]-->
-</head>
-<body class="yui-skin-sam">
-<div class="page_margins">
-  <div class="page">
-    <div id="header">
-      <div id="topnav">
-        <!-- start: skip link navigation -->
-        <a class="skip" href="#navigation" title="skip link">Skip to navigation</a><span class="hideme">.</span>
-        <a class="skip" href="#content" title="skip link">Skip to content</a><span class="hideme">.</span>
-        <!-- end: skip link navigation -->
-        <span> 
-        <%@ include file="/WEB-INF/jsp/topNav.jsp" %>
-        </span> </div>
-      <h1> </h1>
-    </div>
-    <!-- begin: main navigation #nav -->
-    <div id="nav">
-      <!-- skip anchor: navigation -->
-      <a id="navigation" name="navigation"></a>
-      <%@ include file="/WEB-INF/jsp/mainNav.jsp" %>   
-    </div>
-    <!-- end: main navigation -->
-    <!-- begin: content area #main -->
-    <div id="main">
-      <!-- begin: #col1 - first float column -->
-      <div id="col1">
-        <div id="col1_content" class="clearfix"> </div>
-        <%@ include file="/WEB-INF/jsp/user/subNav.jsp" %>
-      </div>
-      <!-- end: #col1 -->
-      <!-- begin: #col2 second float column -->
-      <div id="col2">
-        <div id="col2_content" class="clearfix"> </div>
-        <%@ include file="/WEB-INF/jsp/help.jsp" %>
-      </div>
-      <!-- end: #col2 -->
-      <!-- begin: #col3 static column -->
-      <div id="col3">
-        <div id="col3_content" class="clearfix">
-          <!-- skip anchor: content -->
-          <a id="content" name="content"></a>
-                &nbsp;    
-                <c:set var="maxStages" value="${fn:length(buildPlanCommand.stageCommands)}"/>
-                <c:set var="maxStages" value="${maxStages-1}"/>
-                <dl class="note">
-                <dt>Build Plan - ${buildPlanCommand.name} &nbsp;&nbsp;&nbsp;
-                    <span style="font-size:10px">
-                        <a href="#">
-                            <span>
-                                Edit | 
-                            </span>
-                        </a>
-                    </span>
-                    <span style="font-size:10px">
-                        <a href="#">
-                            <span>
-                                Delete | 
-                            </span>
-                        </a>
-                    </span>
-                    <span style="font-size:10px">
-                        <a href="#" id="showEditStage${maxStages}">
-                            <span>
-                                Add Stage |
-                            </span>
-                        </a>
-                    </span>
-                    <span style="font-size:10px">
-                        <a href="#" id="showRunBuildPlan">
-                            <span>
-                                Run Build Plan
-                            </span>
-                        </a>
-                    </span>
-                </dt>
-                <dd>&nbsp;</dd>
-                <c:set var="stageCommandCounter" value="-1" />
-                <c:forEach items="${buildPlanCommand.stageCommands}" var="stageCommand">
-                    <c:set var="stageCommandCounter" value="${stageCommandCounter+1}" />
-                    <%@ include file="/WEB-INF/jsp/user/includeEditStage.jsp" %>
-                </c:forEach>
-                </dl>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>Welcome</title>
         
-                <div id="runBuildPlan">
-                    <form:form method="post" action="runBuildPlan.html" cssClass="yform">
-                        <input type="hidden" name="id" value="${buildPlanCommand.id}" />
-                    </form:form>
+        <!-- Standard reset, fonts and grids -->
+
+        <link rel="stylesheet" type="text/css" href="../css/yui/build/reset-fonts-grids/reset-fonts-grids.css" />
+        <link rel="stylesheet" type="text/css" href="../css/yui/build/menu/assets/skins/sam/menu.css" /> 
+        <script type="text/javascript" src="../css/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+        <script type="text/javascript" src="../css/yui/build/container/container_core.js"></script>
+        <script type="text/javascript" src="../css/yui/build/menu/menu.js"></script>
+
+        <style type="text/css">
+            #leftNav {
+                position: static;
+            }
+
+            #leftNav .yuimenuitemlabel {
+                _zoom: 1;
+            }
+
+            #leftNav .yuimenu .yuimenuitemlabel {
+                _zoom: normal;
+            }
+
+        </style>
+
+        <link rel="stylesheet" type="text/css" href="../css/yui/build/button/assets/skins/sam/button.css"></link>
+        <link rel="stylesheet" type="text/css" href="../css/yui/build/container/assets/skins/sam/container.css"></link>
+        
+        <script type="text/javascript" src="../css/yui/build/element/element-min.js"></script>
+        <script type="text/javascript" src="../css/yui/build/button/button-min.js"></script>
+        <script type="text/javascript" src="../css/yui/build/connection/connection-min.js"></script>
+        <script type="text/javascript" src="../css/yui/build/dragdrop/dragdrop-min.js"></script>
+        <script type="text/javascript" src="../css/yui/build/container/container-min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="../css/yui/build/treeview/assets/skins/sam/treeview.css" />
+        <script type="text/javascript" src="../css/yui/build/treeview/treeview-min.js"></script>
+
+        <script type="text/javascript">
+        YAHOO.util.Event.onContentReady("topNav", function () {
+        
+            var oMenuBar = new YAHOO.widget.MenuBar("topNav", { 
+                                                        autosubmenudisplay: true, 
+                                                        hidedelay: 750, 
+                                                        lazyload: true });
+            oMenuBar.render();
+        });
+        </script>
+        
+
+    </head>
+    <body class="yui-skin-sam" id="yahoo-com">
+        <div id="doc" class="yui-t1">
+            <div id="hd">
+                    <h1>Welcome</h1>
+            </div>
+            <div id="bd">
+                <div id="yui-main">
+                    <div class="yui-b">
+                    
+                        <div id="topNav" class="yuimenubar yuimenubarnav">
+                            <div class="bd">
+                                <ul class="first-of-type">
+                                    <li class="yuimenubaritem first-of-type">
+                                        <a class="yuimenubaritemlabel" href="#stage">Stage</a>
+                                        <div id="editStage" class="yuimenu">
+                                            <div class="bd">
+                                                <ul>
+                                                    <li class="yuimenuitem"><a class="yuimenuitemlabel" href="addStage.html?buildPlanId=${buildPlanCommand.id}">Add New Stage</a></li>
+                                                    <c:forEach items="${buildPlanCommand.stageCommands}" var="stageCommand">
+                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="#">${stageCommand.name}</a>
+                                                            <div id="stage${stageCommand.id}" class="yuimenu">
+                                                                <div class="bd">
+                                                                    <ul>
+                                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="editStage.html?stageId=${stageCommand.id}">Edit</a></li>
+                                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="deleteStage.html?stageId=${stageCommand.id}">Delete</a></li>
+                                                                    </ul>            
+                                                                </div>
+                                                            </div>                    
+                                                        </li>
+                                                    </c:forEach>
+                                                    
+                                                </ul>
+                                            </div>
+                                        </div>      
+                                    </li>
+                                    <li class="yuimenubaritem">
+                                        <a class="yuimenubaritemlabel" href="#step">Step</a>
+                                        <div id="editStageStep" class="yuimenu">
+                                            <div class="bd">
+                                                <ul>
+                                                    <c:forEach items="${buildPlanCommand.stageCommands}" var="stageCommand">
+                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="editProject.html?vcs=${vcs}">${stageCommand.name}</a>
+                                                            <div class="yuimenu">
+                                                                <div class="bd">
+                                                                    <ul>
+                                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="addStep.html?stageId=${stageCommand.id}">Add New Step</a></li>
+                                                                        <c:forEach items="${stageCommand.stepCommands}" var="stepCommand">
+                                                                            <li class="yuimenuitem"><a class="yuimenuitemlabel" href="#">${stepCommand.command}</a>
+                                                                                <div id="step${stepCommand.id}" class="yuimenu">
+                                                                                    <div class="bd">
+                                                                                        <ul>
+                                                                                            <li class="yuimenuitem"><a class="yuimenuitemlabel" href="editStep.html?stepId=${stepCommand.id}">Edit</a></li>
+                                                                                            <li class="yuimenuitem"><a class="yuimenuitemlabel" href="deleteStep.html?stepId=${stepCommand.id}">Delete</a></li>
+                                                                                        </ul>            
+                                                                                    </div>
+                                                                                </div>                    
+                                                                            
+                                                                            </li>
+                                                                        </c:forEach>
+                                                                        </li>
+                                                                    </ul>            
+                                                                </div>
+                                                            </div>                    
+                                                        </li>
+                                                    </c:forEach>
+                                                </ul>
+                                            </div>
+                                        </div>      
+                                    </li>
+                                </ul>
+                            </div>
+                         </div>
+                    
+                    
+                    
+                    
+                    
+                    <div id="msg">&nbsp;</div>
+                    
+                        <div id="markup">
+                            <ul>
+                                <li>${buildPlanCommand.name}
+                                    <ul>
+                                        <c:forEach items="${buildPlanCommand.stageCommands}" var="stageCommand">
+                                            
+                                                <li>${stageCommand.name}
+                                                    <ul>
+                                                        <c:forEach items="${stageCommand.stepCommands}" var="stepCommand">
+                                                                <li>${stepCommand.command}</li>
+                                                        </c:forEach>
+                                                    </ul>
+                                                </li>
+                                        
+                                        </c:forEach>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        
+                        <script type="text/javascript">
+                        var tree1;
+                        (function() {
+                            var treeInit = function() {
+                                tree1 = new YAHOO.widget.TreeView("markup");
+                                tree1.render();
+                                tree1.expandAll();
+                                
+                                var oContextMenu = new YAHOO.widget.ContextMenu("mytreecontextmenu", {
+                                                                                trigger: "markup",
+                                                                                lazyload: true, 
+                                                                                itemdata: [
+                                                                                    { text: "Add"},
+                                                                                    { text: "Edit"},
+                                                                                    { text: "Delete"}
+                                                                                ] });
+                                
+                                
+                                
+                                oContextMenu.subscribe("triggerContextMenu", onTriggerContextMenu);                                
+                                
+                                 
+                            };
+                            YAHOO.util.Event.onDOMReady(treeInit);
+                        })();
+                        
+                        </script>                        
+
+                    </div>
                 </div>
-        
+                <div class="yui-b">
+                    <%@ include file="/WEB-INF/jsp/leftNav.jsp" %>
+                </div>
+            </div>
+            <div id="ft">
+                <p>FOOTER</p>
+            </div>
         </div>
-        <!-- IE column clearing -->
-        <div id="ie_clearing">&nbsp;</div>
-      </div>
-      <!-- end: #col3 -->
-    </div>
-    <!-- end: #main -->
-    <!-- begin: #footer -->
-    <div id="footer">Layout based on <a href="http://www.yaml.de/">YAML</a></div>
-    <!-- end: #footer -->
-  </div>
-</div>
-</body>
+        
+    </body>
 </html>
+
