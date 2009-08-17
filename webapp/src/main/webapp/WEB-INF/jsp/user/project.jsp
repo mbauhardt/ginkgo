@@ -68,27 +68,36 @@
                             <div class="bd">
                                 <ul class="first-of-type">
                                     <li class="yuimenubaritem first-of-type">
-                                        <a class="yuimenubaritemlabel" href="addProject.html">Add New Project</a>  
+                                        <a class="yuimenubaritemlabel" href="editProject.html?projectId=${project.id}">Edit</a>  
                                     </li>
-                        
+                                    <li class="yuimenubaritem first-of-type">
+                                        <a class="yuimenubaritemlabel" href="deleteProject.html?projectId=${project.id}">Delete</a>  
+                                    </li>
+                                    <li class="yuimenubaritem first-of-type">
+                                        <a class="yuimenubaritemlabel" href="addBuildPlan.html?projectId=${project.id}">Add Build Plan</a>  
+                                    </li>
                                 </ul>            
                             </div>
                          </div>
-                        <c:forEach items="${projects}" var="project">
 
-                        
-                            <span>
-                                <b><a href="project.html?projectId=${project.id}">${project.name}</a></b>
-                            </span>
-                            <hr/>
-                                <div class="yui-gd">
-                                    <div class="yui-u first">
-                                        <c:forEach items="${project.buildPlans}" var="buildPlan">
-                                            <p><a href="buildPlan.html?buildPlanId=${buildPlan.id}">${buildPlan.name}</a></p>
-                                        </c:forEach>
-                                    </div>
-                                </div>
-                        </c:forEach>
+
+                        <b>${project.name}</b>
+                         <div class="yui-gd">
+                            <div class="yui-u first">
+                                <c:forEach items="${project.buildPlans}" var="buildPlan">
+                                    <p><a href="buildPlan.html?buildPlanId=${buildPlan.id}">${buildPlan.name}</a></p>
+                                </c:forEach>
+                            </div>
+                            <div class="yui-u">
+                                <p>
+                                    VCS: ${project.vcs}
+                                    <c:forEach items="${project.configurationTuples}" var="configurationTuple">
+                                        <div>${configurationTuple.tupleKey}: ${configurationTuple.tupleValue}</div>
+                                    </c:forEach>
+                                </p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <!-- end: primary column from outer template -->

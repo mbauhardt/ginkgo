@@ -65,20 +65,20 @@
                     
                         <div id="topNav" class="yuimenubar yuimenubarnav">
                             <div class="bd">
-                                <ul class="first-of-type">
-                                    <li class="yuimenubaritem first-of-type">
+                                <ul>
+                                    <li>
                                         <a class="yuimenubaritemlabel" href="#stage">Stage</a>
                                         <div id="editStage" class="yuimenu">
                                             <div class="bd">
                                                 <ul>
-                                                    <li class="yuimenuitem"><a class="yuimenuitemlabel" href="addStage.html?buildPlanId=${buildPlanCommand.id}">Add New Stage</a></li>
-                                                    <c:forEach items="${buildPlanCommand.stageCommands}" var="stageCommand">
-                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="#">${stageCommand.name}</a>
-                                                            <div id="stage${stageCommand.id}" class="yuimenu">
+                                                    <li class="yuimenuitem"><a class="yuimenuitemlabel" href="addStage.html?buildPlanId=${buildPlan.id}">Add New Stage</a></li>
+                                                    <c:forEach items="${buildPlan.stages}" var="stage">
+                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="#">${stage.name}</a>
+                                                            <div id="stage${stage.id}" class="yuimenu">
                                                                 <div class="bd">
                                                                     <ul>
-                                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="editStage.html?stageId=${stageCommand.id}">Edit</a></li>
-                                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="deleteStage.html?stageId=${stageCommand.id}">Delete</a></li>
+                                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="editStage.html?stageId=${stage.id}">Edit</a></li>
+                                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="deleteStage.html?stageId=${stage.id}">Delete</a></li>
                                                                     </ul>            
                                                                 </div>
                                                             </div>                    
@@ -94,19 +94,19 @@
                                         <div id="editStageStep" class="yuimenu">
                                             <div class="bd">
                                                 <ul>
-                                                    <c:forEach items="${buildPlanCommand.stageCommands}" var="stageCommand">
-                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="editProject.html?vcs=${vcs}">${stageCommand.name}</a>
+                                                    <c:forEach items="${buildPlan.stages}" var="stage">
+                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="editProject.html?vcs=${vcs}">${stage.name}</a>
                                                             <div class="yuimenu">
                                                                 <div class="bd">
                                                                     <ul>
-                                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="addStep.html?stageId=${stageCommand.id}">Add New Step</a></li>
-                                                                        <c:forEach items="${stageCommand.stepCommands}" var="stepCommand">
-                                                                            <li class="yuimenuitem"><a class="yuimenuitemlabel" href="#">${stepCommand.command}</a>
-                                                                                <div id="step${stepCommand.id}" class="yuimenu">
+                                                                        <li class="yuimenuitem"><a class="yuimenuitemlabel" href="addStep.html?stageId=${stage.id}">Add New Step</a></li>
+                                                                        <c:forEach items="${stage.steps}" var="step">
+                                                                            <li class="yuimenuitem"><a class="yuimenuitemlabel" href="#">${step.command}</a>
+                                                                                <div id="step${step.id}" class="yuimenu">
                                                                                     <div class="bd">
                                                                                         <ul>
-                                                                                            <li class="yuimenuitem"><a class="yuimenuitemlabel" href="editStep.html?stepId=${stepCommand.id}">Edit</a></li>
-                                                                                            <li class="yuimenuitem"><a class="yuimenuitemlabel" href="deleteStep.html?stepId=${stepCommand.id}">Delete</a></li>
+                                                                                            <li class="yuimenuitem"><a class="yuimenuitemlabel" href="editStep.html?stepId=${step.id}">Edit</a></li>
+                                                                                            <li class="yuimenuitem"><a class="yuimenuitemlabel" href="deleteStep.html?stepId=${step.id}">Delete</a></li>
                                                                                         </ul>            
                                                                                     </div>
                                                                                 </div>                    
@@ -123,11 +123,19 @@
                                             </div>
                                         </div>      
                                     </li>
+                                    <li>
+                                        <a href="deleteBuildPlan.html?buildPlanId=${buildPlan.id}">Delete</a>
+                                    </li>
+                                    <li>
+                                        <a href="#stage">Run</a>
+                                    </li>
+                                    <li>
+                                        <a href="buildNumbers.html?buildPlanId=${buildPlan.id}">Buildnumber's</a>
+                                    </li>
+                                    
                                 </ul>
                             </div>
                          </div>
-                    
-                    
                     
                     
                     
@@ -135,14 +143,14 @@
                     
                         <div id="markup">
                             <ul>
-                                <li>${buildPlanCommand.name}
+                                <li>${buildPlan.name}
                                     <ul>
-                                        <c:forEach items="${buildPlanCommand.stageCommands}" var="stageCommand">
+                                        <c:forEach items="${buildPlan.stages}" var="stage">
                                             
-                                                <li>${stageCommand.name}
+                                                <li>${stage.name}
                                                     <ul>
-                                                        <c:forEach items="${stageCommand.stepCommands}" var="stepCommand">
-                                                                <li>${stepCommand.command}</li>
+                                                        <c:forEach items="${stage.steps}" var="step">
+                                                                <li>${step.command}</li>
                                                         </c:forEach>
                                                     </ul>
                                                 </li>
@@ -162,20 +170,6 @@
                                 tree1.render();
                                 tree1.expandAll();
                                 
-                                var oContextMenu = new YAHOO.widget.ContextMenu("mytreecontextmenu", {
-                                                                                trigger: "markup",
-                                                                                lazyload: true, 
-                                                                                itemdata: [
-                                                                                    { text: "Add"},
-                                                                                    { text: "Edit"},
-                                                                                    { text: "Delete"}
-                                                                                ] });
-                                
-                                
-                                
-                                oContextMenu.subscribe("triggerContextMenu", onTriggerContextMenu);                                
-                                
-                                 
                             };
                             YAHOO.util.Event.onDOMReady(treeInit);
                         })();

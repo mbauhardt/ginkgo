@@ -20,11 +20,13 @@ import ginkgo.webapp.persistence.model.Step;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,7 +44,8 @@ public class ProjectController {
     private final IStepDao _stepDao;
 
     @Autowired
-    public ProjectController(PluginRepository pluginRepository, IBuildPlanDao buildPlanDao, IStageDao stageDao, IStepDao stepDao, IProjectDao projectDao, IConfigurationTupleDao configurationTupleDao,
+    public ProjectController(PluginRepository pluginRepository, IBuildPlanDao buildPlanDao, IStageDao stageDao,
+            IStepDao stepDao, IProjectDao projectDao, IConfigurationTupleDao configurationTupleDao,
             VcsPlugin... vcsPlugins) {
         _pluginRepository = pluginRepository;
         _buildPlanDao = buildPlanDao;
@@ -72,42 +75,43 @@ public class ProjectController {
         return new BuildPlanCommand();
     }
 
-    @RequestMapping(value = "/user/addBuildPlan.html", method = RequestMethod.POST)
-    public String addBuildPlan(@ModelAttribute("buildPlanCommand") BuildPlanCommand buildPlanCommand, @RequestParam("projectId") Long projectId) throws DaoException, InvalidArgumentException {
-        Project project = _projectDao.getById(projectId);
-        BuildPlan buildPlan = new BuildPlan();
-        buildPlan.setName(buildPlanCommand.getName());
-        
-        String vcs = project.getVcs();
-        VcsPlugin vcsPlugin = _pluginRepository.create(vcs);
-//        String[] parameters=null;
-//        vcsPlugin.parametrize(parameters);
-        String checkoutCommand = vcsPlugin.getCheckoutCommand();
-        String updateCommand = vcsPlugin.getUpdateCommand();
-        
-        Stage stage = new Stage();
-        stage.setName("Vcs Prepare");
-        
-        Step checkoutStep = new Step();
-        checkoutStep.setCommand(checkoutCommand);
-        stage.addStep(checkoutStep);
-        
-        Step updateStep = new Step();
-        updateStep.setCommand(updateCommand);
-        stage.addStep(updateStep);
-        
-        buildPlan.addStage(stage);
-        
-        _stepDao.makePersistent(checkoutStep);
-        _stepDao.makePersistent(updateStep);
-        _stageDao.makePersistent(stage);
-        _buildPlanDao.makePersistent(buildPlan);
-        project.addBuildPlan(buildPlan);
-        return "redirect:/user/projects.html";
-    }
+//    @RequestMapping(value = "/user/addBuildPlan.html", method = RequestMethod.POST)
+//    public String addBuildPlan(@ModelAttribute("buildPlanCommand") BuildPlanCommand buildPlanCommand,
+//            @RequestParam("projectId") Long projectId) throws DaoException, InvalidArgumentException {
+//        Project project = _projectDao.getById(projectId);
+//        BuildPlan buildPlan = new BuildPlan();
+//        buildPlan.setName(buildPlanCommand.getName());
+//
+//        String vcs = project.getVcs();
+//        VcsPlugin vcsPlugin = _pluginRepository.create(vcs);
+//        // String[] parameters=null;
+//        // vcsPlugin.parametrize(parameters);
+//        String checkoutCommand = vcsPlugin.getCheckoutCommand();
+//        String updateCommand = vcsPlugin.getUpdateCommand();
+//
+//        Stage stage = new Stage();
+//        stage.setName("Vcs Prepare");
+//
+//        Step checkoutStep = new Step();
+//        checkoutStep.setCommand(checkoutCommand);
+//        stage.addStep(checkoutStep);
+//
+//        Step updateStep = new Step();
+//        updateStep.setCommand(updateCommand);
+//        stage.addStep(updateStep);
+//
+//        buildPlan.addStage(stage);
+//
+//        _stepDao.makePersistent(checkoutStep);
+//        _stepDao.makePersistent(updateStep);
+//        _stageDao.makePersistent(stage);
+//        _buildPlanDao.makePersistent(buildPlan);
+//        project.addBuildPlan(buildPlan);
+//        return "redirect:/user/projects.html";
+//    }
 
     @ModelAttribute(value = "projectCommand")
-    public ProjectCommand createModelAttribute(@RequestParam(value = "id", required = false) Long id,
+    public ProjectCommand createModelAttribute(@RequestParam(value = "projectId", required = false) Long id,
             @RequestParam(value = "vcs", required = false) String vcs) throws DaoException {
         Project project = new Project();
         if (id != null) {
@@ -142,22 +146,24 @@ public class ProjectController {
         return projectCommand;
     }
 
-    @RequestMapping(value = "/user/listProjects.html", method = RequestMethod.GET)
-    public String listProjects() throws DaoException {
-        return "user/listProjects";
-    }
-
     @RequestMapping(value = "/user/projects.html", method = RequestMethod.GET)
     public String listProjects2() throws DaoException {
         return "user/projects";
     }
 
-    @RequestMapping(value = { "/user/editProject.html" }, method = RequestMethod.GET)
+    @RequestMapping(value = "/user/project.html", method = RequestMethod.GET)
+    public String project(@RequestParam(value = "projectId") Long id, Model model) throws DaoException {
+        Project byId = _projectDao.getById(id);
+        model.addAttribute("project", byId);
+        return "user/project";
+    }
+
+    @RequestMapping(value = { "/user/editProject.html", "/user/addProject.html" }, method = RequestMethod.GET)
     public String editProject() throws DaoException {
         return "user/editProject";
     }
 
-    @RequestMapping(value = { "/user/editProject.html" }, method = RequestMethod.POST)
+    @RequestMapping(value = { "/user/editProject.html", "/user/addProject.html" }, method = RequestMethod.POST)
     public String editProject(@ModelAttribute("projectCommand") ProjectCommand projectCommand,
             HttpServletRequest request) throws DaoException {
         Long id = projectCommand.getId();
@@ -193,15 +199,39 @@ public class ProjectController {
             }
         }
 
-        return "redirect:projects.html";
+        return "redirect:project.html?projectId=" + project.getId();
+    }
+
+    @RequestMapping(value = { "/user/deleteProject.html" }, method = RequestMethod.GET)
+    public String deleteProject(Model model, @RequestParam(value = "projectId", required = true) Long projectId)
+            throws DaoException {
+        Project project = _projectDao.getById(projectId);
+        model.addAttribute("project", project);
+        return "/user/deleteProject";
     }
 
     @RequestMapping(value = "/user/deleteProject.html", method = RequestMethod.POST)
-    public String deleteProject(@RequestParam(value = "id", required = true) Long id) throws DaoException {
+    public String deleteProject(@RequestParam(value = "projectId", required = true) Long id) throws DaoException {
         Project byId = _projectDao.getById(id);
         List<ConfigurationTuple> configurationTuples = byId.getConfigurationTuples();
         for (ConfigurationTuple configurationTuple : configurationTuples) {
             _configurationTupleDao.makeTransient(configurationTuple);
+            _configurationTupleDao.flush();
+        }
+        List<BuildPlan> buildPlans = byId.getBuildPlans();
+        for (BuildPlan buildPlan : buildPlans) {
+            Set<Stage> stages = buildPlan.getStages();
+            for (Stage stage : stages) {
+                List<Step> steps = stage.getSteps();
+                for (Step step : steps) {
+                    _stepDao.makeTransient(step);
+                    _stepDao.flush();
+                }
+                _stageDao.makeTransient(stage);
+                _stageDao.flush();
+            }
+            _buildPlanDao.makeTransient(buildPlan);
+            _buildPlanDao.flush();
         }
         _projectDao.makeTransient(byId);
         return "redirect:projects.html";

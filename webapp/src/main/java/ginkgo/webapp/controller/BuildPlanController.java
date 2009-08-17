@@ -1,9 +1,8 @@
 package ginkgo.webapp.controller;
 
+import ginkgo.api.VcsPlugin;
 import ginkgo.webapp.PluginRepository;
 import ginkgo.webapp.controller.commandObjects.BuildPlanCommand;
-import ginkgo.webapp.controller.commandObjects.StageCommand;
-import ginkgo.webapp.controller.commandObjects.StepCommand;
 import ginkgo.webapp.controller.editor.BaseEditor;
 import ginkgo.webapp.persistence.dao.DaoException;
 import ginkgo.webapp.persistence.dao.IBuildDao;
@@ -60,83 +59,12 @@ public class BuildPlanController {
         binder.registerCustomEditor(Project.class, new BaseEditor(_projectDao));
     }
 
-    @ModelAttribute("projects")
-    public List<Project> injectProjects() throws DaoException {
-        return _projectDao.getAll();
-    }
-
-    @ModelAttribute("buildPlans")
-    public List<BuildPlan> injectBuildPlans() throws DaoException {
-        return _buildPlanDao.getAll();
-    }
-
-    @ModelAttribute(value = "buildPlanCommand")
-    public BuildPlanCommand injectBuildPlanCommand(@RequestParam(value = "id", required = false) Long id)
-            throws DaoException {
-        BuildPlan buildPlan = new BuildPlan();
-        if (id != null) {
-            buildPlan = _buildPlanDao.getById(id);
-        }
-        BuildPlanCommand buildPlanCommand = new BuildPlanCommand();
-        buildPlanCommand.setId(buildPlan.getId());
-        buildPlanCommand.setName(buildPlan.getName());
-        buildPlanCommand.setProject(buildPlan.getProject());
-
-        Set<Stage> stages = buildPlan.getStages();
-        for (Stage stage : stages) {
-            StageCommand stageCommand = new StageCommand();
-            stageCommand.setId(stage.getId());
-            stageCommand.setName(stage.getName());
-            stageCommand.setBuildPlan(buildPlan);
-            buildPlanCommand.addStageCommand(stageCommand);
-            List<Step> steps = stage.getSteps();
-            for (Step step : steps) {
-                StepCommand stepCommand = new StepCommand();
-                stepCommand.setId(step.getId());
-                stepCommand.setCommand(step.getCommand());
-                stageCommand.addStepCommand(stepCommand);
-            }
-        }
-        return buildPlanCommand;
-    }
-
     @RequestMapping(value = "/user/buildPlan.html", method = RequestMethod.GET)
-    public String buildPlanTree(Model model, @RequestParam("id") Long id) throws DaoException {
+    public String buildPlanTree(@RequestParam("buildPlanId") Long id, Model model) throws DaoException {
+        BuildPlan buildPlan = _buildPlanDao.getById(id);
+        model.addAttribute("buildPlan", buildPlan);
         return "user/buildPlan";
     }
-
-//    // STAGE
-//    @RequestMapping(value = { "/user/editStage.html" }, method = RequestMethod.POST)
-//    public String editStage(@ModelAttribute("buildPlanCommand") BuildPlanCommand buildPlanCommand,
-//            @RequestParam(value = "stageIndex", required = true) Integer stageIndex) throws DaoException {
-//        StageCommand stageCommand = buildPlanCommand.getStageCommands().get(stageIndex);
-//        Long id = stageCommand.getId();
-//        Stage stage = null;
-//        if (id == null) {
-//            stage = new Stage();
-//            _stageDao.makePersistent(stage);
-//        } else {
-//            stage = _stageDao.getById(id);
-//        }
-//        stage.setName(stageCommand.getName());
-//        stage.setBuildPlan(stageCommand.getBuildPlan());
-//        return "redirect:buildPlan.html?id=" + buildPlanCommand.getId();
-//    }
-//
-//    @RequestMapping(value = { "/user/deleteStage.html" }, method = RequestMethod.POST)
-//    public String deleteStage(@ModelAttribute("buildPlanCommand") BuildPlanCommand buildPlanCommand,
-//            @RequestParam(value = "stageIndex", required = true) Integer stageIndex) throws DaoException {
-//        List<StageCommand> stageCommands = buildPlanCommand.getStageCommands();
-//        StageCommand stageCommand = stageCommands.get(stageIndex);
-//        Long id = stageCommand.getId();
-//        Stage stageById = _stageDao.getById(id);
-//        List<Step> steps = stageById.getSteps();
-//        for (Step step : steps) {
-//            _stepDao.makeTransient(step);
-//        }
-//        _stageDao.makeTransient(stageById);
-//        return "redirect:buildPlan.html?id=" + buildPlanCommand.getId();
-//    }
 
     @RequestMapping(value = { "/user/runBuildPlan.html" }, method = RequestMethod.POST)
     public String runBuildPlan(@RequestParam("id") Long id) throws DaoException {
@@ -171,6 +99,85 @@ public class BuildPlanController {
             }
         }
         return "redirect:/user/listBuildNumbers.html?buildPlanId=" + id;
+    }
+
+    @RequestMapping(value = "/user/deleteBuildPlan.html", method = RequestMethod.GET)
+    public String deleteBuildPlan(@RequestParam(value = "buildPlanId", required = true) Long id, Model model)
+            throws DaoException {
+        BuildPlan byId = _buildPlanDao.getById(id);
+        model.addAttribute("buildPlan", byId);
+        return "user/deleteBuildPlan";
+    }
+
+    @RequestMapping(value = "/user/deleteBuildPlan.html", method = RequestMethod.POST)
+    public String postDeleteBuildPlan(@RequestParam(value = "buildPlanId", required = true) Long id)
+            throws DaoException {
+        BuildPlan byId = _buildPlanDao.getById(id);
+        Set<Stage> stages = byId.getStages();
+        for (Stage stage : stages) {
+            List<Step> steps = stage.getSteps();
+            for (Step step : steps) {
+                _stepDao.makeTransient(step);
+                _stepDao.flush();
+            }
+            _stageDao.makeTransient(stage);
+            _stageDao.flush();
+        }
+        _buildPlanDao.makeTransient(byId);
+        return "redirect:/user/projects.html";
+    }
+
+    @RequestMapping(value = "/user/addBuildPlan.html", method = RequestMethod.GET)
+    public String addBuildPlan(@RequestParam(value = "projectId", required = true) Long id, Model model)
+            throws DaoException {
+        Project project = _projectDao.getById(id);
+        model.addAttribute("project", project);
+        return "user/addBuildPlan";
+    }
+
+    @RequestMapping(value = "/user/addBuildPlan.html", method = RequestMethod.POST)
+    public String postAddBuildPlan(@RequestParam(value = "projectId", required = true) Long projectId,
+            @ModelAttribute("buildPlanCommand") BuildPlanCommand buildPlanCommand) throws DaoException {
+
+        Long id = buildPlanCommand.getId();
+        Project project = _projectDao.getById(projectId);
+        BuildPlan buildPlan = null;
+        if (id == null) {
+            buildPlan = new BuildPlan();
+            buildPlan.setProject(project);
+            _buildPlanDao.makePersistent(buildPlan);
+        } else {
+            buildPlan = _buildPlanDao.getById(id);
+        }
+        buildPlan.setName(buildPlanCommand.getName());
+
+        String vcs = project.getVcs();
+        VcsPlugin vcsPlugin = _pluginRepository.create(vcs);
+        // String[] parameters=null;
+        // vcsPlugin.parametrize(parameters);
+        String checkoutCommand = vcsPlugin.getCheckoutCommand();
+        String updateCommand = vcsPlugin.getUpdateCommand();
+
+        Stage stage = new Stage();
+        stage.setName("Vcs Prepare");
+
+        Step checkoutStep = new Step();
+        checkoutStep.setCommand(checkoutCommand);
+        stage.addStep(checkoutStep);
+
+        Step updateStep = new Step();
+        updateStep.setCommand(updateCommand);
+        stage.addStep(updateStep);
+
+        buildPlan.addStage(stage);
+
+        _stepDao.makePersistent(checkoutStep);
+        _stepDao.makePersistent(updateStep);
+        _stageDao.makePersistent(stage);
+        _buildPlanDao.makePersistent(buildPlan);
+        project.addBuildPlan(buildPlan);
+        return updateCommand;
+
     }
 
 }

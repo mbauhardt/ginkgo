@@ -63,13 +63,13 @@ public class StepController {
         Step step = null;
         if (id == null) {
             step = new Step();
+            step.setStage(stepCommand.getStage());
             _stepDao.makePersistent(step);
         } else {
             step = _stepDao.getById(id);
         }
         step.setCommand(stepCommand.getCommand());
-        step.setStage(stepCommand.getStage());
-        return "redirect:buildPlan.html?id=" + stepCommand.getStage().getBuildPlan().getId();
+        return "redirect:buildPlan.html?buildPlanId=" + stepCommand.getStage().getBuildPlan().getId();
     }
 
     @RequestMapping(value = { "/user/deleteStep.html" }, method = RequestMethod.GET)
@@ -84,7 +84,7 @@ public class StepController {
     public String postDeleteStep(@RequestParam(value = "stepId", required = true) Long id) throws DaoException {
         Step stepById = _stepDao.getById(id);
         _stepDao.makeTransient(stepById);
-        return "redirect:buildPlan.html?id=" + stepById.getStage().getBuildPlan().getId();
+        return "redirect:buildPlan.html?buildPlanId=" + stepById.getStage().getBuildPlan().getId();
     }
 
 }

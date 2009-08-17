@@ -1,8 +1,5 @@
 package ginkgo.webapp.controller;
 
-import java.util.Iterator;
-import java.util.List;
-
 import ginkgo.webapp.controller.commandObjects.StageCommand;
 import ginkgo.webapp.controller.editor.BaseEditor;
 import ginkgo.webapp.persistence.dao.DaoException;
@@ -12,6 +9,8 @@ import ginkgo.webapp.persistence.dao.IStepDao;
 import ginkgo.webapp.persistence.model.BuildPlan;
 import ginkgo.webapp.persistence.model.Stage;
 import ginkgo.webapp.persistence.model.Step;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -70,13 +69,13 @@ public class StageController {
         Stage stage = null;
         if (id == null) {
             stage = new Stage();
+            stage.setBuildPlan(stageCommand.getBuildPlan());
             _stageDao.makePersistent(stage);
         } else {
             stage = _stageDao.getById(id);
         }
         stage.setName(stageCommand.getName());
-        stage.setBuildPlan(stageCommand.getBuildPlan());
-        return "redirect:buildPlan.html?id=" + stageCommand.getBuildPlan().getId();
+        return "redirect:buildPlan.html?buildPlanId=" + stageCommand.getBuildPlan().getId();
     }
 
     @RequestMapping(value = { "/user/deleteStage.html" }, method = RequestMethod.GET)
@@ -96,7 +95,7 @@ public class StageController {
             _stepDao.flush();
         }
         _stageDao.makeTransient(stage);
-        return "redirect:buildPlan.html?id=" + stage.getBuildPlan().getId();
+        return "redirect:buildPlan.html?buildPlanId=" + stage.getBuildPlan().getId();
     }
 
 }
