@@ -3,7 +3,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <html>
     <head>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <title>Welcome</title>
         
         <!-- Standard reset, fonts and grids -->
@@ -31,32 +31,35 @@
 
     </head>
     <body class="yui-skin-sam" id="yahoo-com">
-
         <div id="doc" class="yui-t1">
             <div id="hd">
-                <!-- start: your content here -->
-                    <h1>Welcome</h1>
-                <!-- end: your content here -->
+                    <h1>Edit Project</h1>
             </div>
             <div id="bd">
-
-                <!-- start: primary column from outer template -->
                 <div id="yui-main">
                     <div class="yui-b">
+                      <form:form method="post" action="editBuildPlan.html"  modelAttribute="buildPlan" >
+                        <fieldset>
+                          <legend>Build Plan</legend>
+                          <div>
+                            <form:label path="name">Name</form:label>
+                            <form:input path="name"/>
+                          </div>
+                        </fieldset>
+                        <div>
+                          <input type="submit" value="Update" />
+                        </div>
+                        <form:hidden path="id"/>
+                        <form:hidden path="project"/>
+                      </form:form>
                     </div>
                 </div>
-                <!-- end: primary column from outer template -->
-
-                <!-- start: secondary column from outer template -->
                 <div class="yui-b">
-                    <%@ include file="/WEB-INF/jsp/leftNav.jsp" %>                
-                 </div>
-                <!-- end: secondary column from outer template -->
+                    <%@ include file="/WEB-INF/jsp/leftNav.jsp" %>
+                </div>
             </div>
             <div id="ft">
-
                 <p>FOOTER</p>
-
             </div>
         </div>
         

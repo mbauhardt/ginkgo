@@ -124,10 +124,13 @@
                                         </div>      
                                     </li>
                                     <li>
+                                        <a href="editBuildPlan.html?buildPlanId=${buildPlan.id}">Edit</a>
+                                    </li>
+                                    <li>
                                         <a href="deleteBuildPlan.html?buildPlanId=${buildPlan.id}">Delete</a>
                                     </li>
                                     <li>
-                                        <a href="#stage">Run</a>
+                                        <a href="runBuildPlan.html?buildPlanId=${buildPlan.id}">Run</a>
                                     </li>
                                     <li>
                                         <a href="buildNumbers.html?buildPlanId=${buildPlan.id}">Buildnumber's</a>

@@ -14,6 +14,7 @@ import ginkgo.webapp.persistence.dao.IStepDao;
 import ginkgo.webapp.persistence.model.BuildCommand;
 import ginkgo.webapp.persistence.model.BuildNumber;
 import ginkgo.webapp.persistence.model.BuildPlan;
+import ginkgo.webapp.persistence.model.ConfigurationTuple;
 import ginkgo.webapp.persistence.model.Project;
 import ginkgo.webapp.persistence.model.Stage;
 import ginkgo.webapp.persistence.model.Step;
@@ -24,6 +25,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -67,7 +69,7 @@ public class BuildPlanController {
     }
 
     @RequestMapping(value = { "/user/runBuildPlan.html" }, method = RequestMethod.POST)
-    public String runBuildPlan(@RequestParam("id") Long id) throws DaoException {
+    public String runBuildPlan(@RequestParam("buildPlanId") Long id) throws DaoException {
 
         BuildPlan buildPlan = _buildPlanDao.getById(id);
         int bn = 1;
@@ -127,57 +129,40 @@ public class BuildPlanController {
         return "redirect:/user/projects.html";
     }
 
-    @RequestMapping(value = "/user/addBuildPlan.html", method = RequestMethod.GET)
-    public String addBuildPlan(@RequestParam(value = "projectId", required = true) Long id, Model model)
-            throws DaoException {
-        Project project = _projectDao.getById(id);
-        model.addAttribute("project", project);
-        return "user/addBuildPlan";
+    @RequestMapping(value = { "/user/addBuildPlan.html", "/user/editBuildPlan.html" }, method = RequestMethod.GET)
+    public String editBuildPlan(@RequestParam(value = "projectId", required = false) Long projectId,
+            @RequestParam(value = "buildPlanId", required = false) Long buildPlanId, Model model) throws DaoException, MissingServletRequestParameterException {
+        if(projectId == null && buildPlanId == null) {
+            throw new MissingServletRequestParameterException("projectId or buildPlanId", Long.class.getName());
+        }
+        BuildPlanCommand buildPlanCommand = new BuildPlanCommand();
+        if (buildPlanId != null) {
+            BuildPlan buildPlan = _buildPlanDao.getById(buildPlanId);
+            buildPlanCommand.setId(buildPlan.getId());
+            buildPlanCommand.setName(buildPlan.getName());
+            buildPlanCommand.setProject(buildPlan.getProject());
+        } else if (projectId != null) {
+            buildPlanCommand.setProject(_projectDao.getById(projectId));
+        }
+        model.addAttribute("buildPlan", buildPlanCommand);
+        return "user/editBuildPlan";
     }
 
-    @RequestMapping(value = "/user/addBuildPlan.html", method = RequestMethod.POST)
-    public String postAddBuildPlan(@RequestParam(value = "projectId", required = true) Long projectId,
-            @ModelAttribute("buildPlanCommand") BuildPlanCommand buildPlanCommand) throws DaoException {
+    @RequestMapping(value = { "/user/addBuildPlan.html", "/user/editBuildPlan.html" }, method = RequestMethod.POST)
+    public String postAddBuildPlan(@ModelAttribute("buildPlanCommand") BuildPlanCommand buildPlanCommand)
+            throws DaoException {
 
-        Long id = buildPlanCommand.getId();
-        Project project = _projectDao.getById(projectId);
         BuildPlan buildPlan = null;
+        Long id = buildPlanCommand.getId();
         if (id == null) {
             buildPlan = new BuildPlan();
-            buildPlan.setProject(project);
+            buildPlan.setProject(buildPlanCommand.getProject());
             _buildPlanDao.makePersistent(buildPlan);
         } else {
             buildPlan = _buildPlanDao.getById(id);
         }
         buildPlan.setName(buildPlanCommand.getName());
 
-        String vcs = project.getVcs();
-        VcsPlugin vcsPlugin = _pluginRepository.create(vcs);
-        // String[] parameters=null;
-        // vcsPlugin.parametrize(parameters);
-        String checkoutCommand = vcsPlugin.getCheckoutCommand();
-        String updateCommand = vcsPlugin.getUpdateCommand();
-
-        Stage stage = new Stage();
-        stage.setName("Vcs Prepare");
-
-        Step checkoutStep = new Step();
-        checkoutStep.setCommand(checkoutCommand);
-        stage.addStep(checkoutStep);
-
-        Step updateStep = new Step();
-        updateStep.setCommand(updateCommand);
-        stage.addStep(updateStep);
-
-        buildPlan.addStage(stage);
-
-        _stepDao.makePersistent(checkoutStep);
-        _stepDao.makePersistent(updateStep);
-        _stageDao.makePersistent(stage);
-        _buildPlanDao.makePersistent(buildPlan);
-        project.addBuildPlan(buildPlan);
-        return updateCommand;
-
+        return "redirect:/user/buildPlan.html?buildPlanId=" + buildPlan.getId();
     }
-
 }

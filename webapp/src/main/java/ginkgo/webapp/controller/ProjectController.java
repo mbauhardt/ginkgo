@@ -75,41 +75,6 @@ public class ProjectController {
         return new BuildPlanCommand();
     }
 
-//    @RequestMapping(value = "/user/addBuildPlan.html", method = RequestMethod.POST)
-//    public String addBuildPlan(@ModelAttribute("buildPlanCommand") BuildPlanCommand buildPlanCommand,
-//            @RequestParam("projectId") Long projectId) throws DaoException, InvalidArgumentException {
-//        Project project = _projectDao.getById(projectId);
-//        BuildPlan buildPlan = new BuildPlan();
-//        buildPlan.setName(buildPlanCommand.getName());
-//
-//        String vcs = project.getVcs();
-//        VcsPlugin vcsPlugin = _pluginRepository.create(vcs);
-//        // String[] parameters=null;
-//        // vcsPlugin.parametrize(parameters);
-//        String checkoutCommand = vcsPlugin.getCheckoutCommand();
-//        String updateCommand = vcsPlugin.getUpdateCommand();
-//
-//        Stage stage = new Stage();
-//        stage.setName("Vcs Prepare");
-//
-//        Step checkoutStep = new Step();
-//        checkoutStep.setCommand(checkoutCommand);
-//        stage.addStep(checkoutStep);
-//
-//        Step updateStep = new Step();
-//        updateStep.setCommand(updateCommand);
-//        stage.addStep(updateStep);
-//
-//        buildPlan.addStage(stage);
-//
-//        _stepDao.makePersistent(checkoutStep);
-//        _stepDao.makePersistent(updateStep);
-//        _stageDao.makePersistent(stage);
-//        _buildPlanDao.makePersistent(buildPlan);
-//        project.addBuildPlan(buildPlan);
-//        return "redirect:/user/projects.html";
-//    }
-
     @ModelAttribute(value = "projectCommand")
     public ProjectCommand createModelAttribute(@RequestParam(value = "projectId", required = false) Long id,
             @RequestParam(value = "vcs", required = false) String vcs) throws DaoException {

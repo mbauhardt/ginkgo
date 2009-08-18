@@ -48,7 +48,7 @@ public class StageController {
         BuildPlan buildPlan = _buildPlanDao.getById(buildPlanId);
         stageCommand.setBuildPlan(buildPlan);
         model.addAttribute("stageCommand", stageCommand);
-        return "/user/stage";
+        return "/user/editStage";
     }
 
     @RequestMapping(value = { "/user/editStage.html" }, method = RequestMethod.GET)
@@ -60,7 +60,7 @@ public class StageController {
         stageCommand.setName(stage.getName());
         stageCommand.setBuildPlan(stage.getBuildPlan());
         model.addAttribute("stageCommand", stageCommand);
-        return "/user/stage";
+        return "/user/editStage";
     }
 
     @RequestMapping(value = { "/user/editStage.html", "/user/addStage.html" }, method = RequestMethod.POST)

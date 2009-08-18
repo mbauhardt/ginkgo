@@ -40,7 +40,7 @@
                         <div id="editStep">
                         	<div class="hd">Please enter your information</div>
                         	<div class="bd">
-                                <form:form method="post" action="addStep.html" modelAttribute="stepCommand">
+                                <form:form method="post" action="editStep.html" modelAttribute="stepCommand">
                                     <fieldset>
                                         <legend>Step</legend>
                                         <div class="type-text">

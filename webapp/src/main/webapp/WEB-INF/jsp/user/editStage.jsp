@@ -37,10 +37,10 @@
                 <!-- start: primary column from outer template -->
                 <div id="yui-main">
                     <div class="yui-b">
-                        <div id="editStep">
+                        <div id="editStage">
                         	<div class="hd">Please enter your information</div>
                         	<div class="bd">
-                                <form:form method="post" action="addStage.html" modelAttribute="stageCommand">
+                                <form:form method="post" action="editStage.html" modelAttribute="stageCommand">
                                     <fieldset>
                                         <legend>Stage</legend>
                                         <div class="type-text">

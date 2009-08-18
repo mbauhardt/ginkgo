@@ -42,7 +42,7 @@ public class StepController {
         Stage stage = _stageDao.getById(stageId);
         stepCommand.setStage(stage);
         model.addAttribute("stepCommand", stepCommand);
-        return "/user/step";
+        return "/user/editStep";
     }
 
     @RequestMapping(value = { "/user/editStep.html" }, method = RequestMethod.GET)
@@ -54,7 +54,7 @@ public class StepController {
         stepCommand.setCommand(step.getCommand());
         stepCommand.setStage(step.getStage());
         model.addAttribute("stepCommand", stepCommand);
-        return "/user/step";
+        return "/user/editStep";
     }
 
     @RequestMapping(value = { "/user/editStep.html", "/user/addStep.html" }, method = RequestMethod.POST)
